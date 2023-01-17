@@ -1,0 +1,5 @@
+C:/Users/Gian/Documents/proyekgen/build/x64-Debug/CMakeFiles/edit_cache.dir
+C:/Users/Gian/Documents/proyekgen/build/x64-Debug/CMakeFiles/rebuild_cache.dir
+C:/Users/Gian/Documents/proyekgen/build/x64-Debug/proyekgen/CMakeFiles/proyekgen.dir
+C:/Users/Gian/Documents/proyekgen/build/x64-Debug/proyekgen/CMakeFiles/edit_cache.dir
+C:/Users/Gian/Documents/proyekgen/build/x64-Debug/proyekgen/CMakeFiles/rebuild_cache.dir
