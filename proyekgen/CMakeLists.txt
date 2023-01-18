@@ -1,9 +1,11 @@
-﻿# CMakeList.txt : CMake project for proyekgen, include source and define
-# project specific logic here.
-#
-cmake_minimum_required (VERSION 3.8)
+﻿cmake_minimum_required(VERSION 3.0)
+set(PROYEKGEN_TARGET_NAME "proyekgen")
+set(PROYEKGEN_HEADERS "template.h" "generator.h")
+set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "generator.cpp")
 
-# Add source to this project's executable.
-add_executable (proyekgen "proyekgen.cpp" "proyekgen.h")
+find_path(ZSTR_INCLUDE_DIRS "zstr.hpp")
 
-# TODO: Add tests and install targets if needed.
+add_executable(${PROYEKGEN_TARGET_NAME} ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})
+target_include_directories(${PROYEKGEN_TARGET_NAME} PRIVATE ${ZSTR_INCLUDE_DIRS})
+install(TARGETS ${PROYEKGEN_TARGET_NAME} RUNTIME DESTINATION bin)
+include(CPack)
