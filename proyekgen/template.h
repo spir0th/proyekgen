@@ -3,13 +3,12 @@
 #include <iostream>
 #include <string>
 
-// #include "zstr.hpp"
+#include "zstr.hpp"
 
-using filepath = std::filesystem::path;
-using string = std::string;
+using namespace std::filesystem;
+using std::string;
 
-enum class TemplatePlatform
-{
+enum class TemplatePlatform {
 	Any = 0, Windows = 1, Linux = 2, macOS = 3
 };
 
