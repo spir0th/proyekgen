@@ -5,10 +5,11 @@
 
 #include "zstr.hpp"
 
-using namespace std::filesystem;
-using std::string;
+using filepath = std::filesystem::path;
+using string = std::string;
 
-enum class TemplatePlatform {
+enum class TemplatePlatform
+{
 	Any = 0, Windows = 1, Linux = 2, macOS = 3
 };
 
