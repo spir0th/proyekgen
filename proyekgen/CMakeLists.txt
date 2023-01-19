@@ -3,7 +3,6 @@ set(PROYEKGEN_TARGET_NAME "proyekgen")
 set(PROYEKGEN_HEADERS "template.h" "generator.h" "config.h" "console.h")
 set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "generator.cpp" "config.cpp" "console.cpp")
 
-find_path(ZSTR_INCLUDE_DIRS "zstr.hpp")
 find_package(nlohmann_json CONFIG REQUIRED)
 
 add_executable(${PROYEKGEN_TARGET_NAME} ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})

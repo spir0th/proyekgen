@@ -3,8 +3,6 @@
 #include <iostream>
 #include <string>
 
-#include "zstr.hpp"
-
 using filepath = std::filesystem::path;
 using string = std::string;
 
