@@ -42,6 +42,18 @@ Console& Console::operator<<(double num)
 	return *this;
 }
 
+Console& Console::operator>>(pair<const string&, string> args)
+{
+	input(args.first, args.second);
+	return *this;
+}
+
+Console& Console::operator>>(pair<const string&, int> args)
+{
+	input(args.first, args.second);
+	return *this;
+}
+
 void Console::log(const char *ch)
 {
 	paint();
@@ -75,6 +87,18 @@ void Console::log(double num)
 	paint();
 	std::cout << num;
 	end_paint();
+}
+
+void Console::input(const string& msg, string out)
+{
+	std::cout << msg;
+	std::getline(std::cin, out);
+}
+
+void Console::input(const string& msg, int out)
+{
+	std::cout << msg;
+	std::cin >> out;
 }
 
 string Console::end()

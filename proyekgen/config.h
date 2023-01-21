@@ -3,7 +3,10 @@
 #include <fstream>
 #include <string>
 
+#include "console.h"
+#include "error.h"
 #include "nlohmann/json.hpp"
+#include "system.h"
 
 using filepath = std::filesystem::path;
 using file_input = std::ifstream;
@@ -12,13 +15,25 @@ using string = std::string;
 using json = nlohmann::json;
 
 /*
-A base class that reads and stores config information.
+A helper class to locate config files.
+*/
+class ConfigPaths
+{
+public:
+	static string generator();
+	static string global();
+	static string templates();
+	static string version();
+};
+
+/*
+The application config class, it is used in most classes to utilize settings.
 */
 class Config
 {
 public:
-	Config(string path);
-
-private:
-	json data;
+	static json generator();
+	static json global();
+	static json templates();
+	static json version();
 };
