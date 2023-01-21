@@ -91,7 +91,7 @@ string SystemPaths::local_config_path()
 		stream << fallback_path;
 	}
 
-	stream << "/proyekgen";
+	stream << "/.proyekgen/config";
 	return stream.str();
 #endif
 	// If OS has no specific implementation, return an empty string.
@@ -104,7 +104,7 @@ string SystemPaths::system_config_path()
 	// Just use ProgramData to store config files
 	return system_data_path() + "/config";
 #elif defined(__unix__) or defined(__MACH__)
-	const char *path = "etc/proyekgen";
+	const char *path = "/etc/proyekgen/config";
 	stringstream stream;
 
 	if (std::filesystem::is_directory(path)) {
@@ -154,7 +154,7 @@ string SystemPaths::local_data_path()
 		stream << fallback_path;
 	}
 
-	stream << "/proyekgen";
+	stream << "/.proyekgen";
 	return stream.str();
 #endif
 	// If OS has no specific implementation, return an empty string.
