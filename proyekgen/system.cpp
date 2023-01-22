@@ -89,6 +89,8 @@ string SystemPaths::local_config_path()
 		stream << path;
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
+	} else {
+		throw UnixNoPathPreservedError("Unable to locate local config files.");
 	}
 
 	stream << "/.proyekgen/config";
@@ -104,12 +106,11 @@ string SystemPaths::system_config_path()
 	// Just use ProgramData to store config files
 	return system_data_path() + "/config";
 #elif defined(__unix__) or defined(__MACH__)
-	const char *path = "/etc/proyekgen/config";
+	const char *path = "/etc/proyekgen";
 	stringstream stream;
 
-	if (std::filesystem::is_directory(path)) {
-		// Return an empty string if path does not exist/is not a directory
-		return string();
+	if (!std::filesystem::is_directory(path)) {
+		throw UnixNoPathPreservedError("Unable to locate system config files.");
 	}
 
 	stream << path;
@@ -152,6 +153,8 @@ string SystemPaths::local_data_path()
 		stream << path;
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
+	} else {
+		throw UnixNoPathPreservedError("Unable to locate local data files.");
 	}
 
 	stream << "/.proyekgen";
@@ -190,8 +193,7 @@ string SystemPaths::system_data_path()
 	stringstream stream;
 
 	if (std::filesystem::is_directory(path)) {
-		// Return an empty string if path does not exist/is not a directory
-		return string();
+		throw UnixNoPathPreservedError("Unable to locate system data files.");
 	}
 
 	stream << path << "/proyekgen";

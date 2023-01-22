@@ -1,6 +1,6 @@
 #include "error.h"
 
-RequiredConfigNotFoundError::RequiredConfigNotFoundError(const string& what)
+UnixNoPathPreservedError::UnixNoPathPreservedError(const string& what)
 	: filesystem_error(what, std::error_code())
 {}
 
