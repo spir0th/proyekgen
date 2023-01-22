@@ -29,7 +29,7 @@ bool SystemRuntime::is_admin_or_root()
 	return false;
 }
 
-string SystemPaths::executable_path()
+string SystemPaths::executable_path()	
 {
 #if defined(_WIN32)
 	wchar_t path[MAX_PATH] = {0};
@@ -44,7 +44,7 @@ string SystemPaths::executable_path()
 
 	return path_str;
 #elif defined(__unix__) or defined(__MACH__)
-	char *result = nullptr;
+	char result[PATH_MAX];
 	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
 	return string(result, (count > 0) ? count : 0);
 #endif

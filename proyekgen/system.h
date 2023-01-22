@@ -11,6 +11,7 @@
 #include <Windows.h>
 #include <ShlObj.h>
 #elif defined(__unix__) or defined(__MACH__)
+#include "limits.h"
 #include "unistd.h"
 #endif
 
