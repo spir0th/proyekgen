@@ -97,13 +97,6 @@ json Config::version()
 	} catch (json::parse_error ex) {
 		print_error << "Version config parsing failed: " << ex.what();
 	}
-	if (cfg == json::object()) {
-		cfg["major"] = 0;
-		cfg["minor"] = 0;
-		cfg["patch"] = 0;
-		cfg["build_date"] = 0;
-		cfg["release_id"] = -1;
-	}
 
 	return cfg;
 }
