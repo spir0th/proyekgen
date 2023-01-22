@@ -26,6 +26,5 @@ int main(int argc, char *argv[])
 		print << "no" << newline;
 	}
 
-	Console().input("Press the RETURN key to exit...", string());
 	return 0;
 }

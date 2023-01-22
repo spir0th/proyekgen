@@ -106,15 +106,8 @@ string SystemPaths::system_config_path()
 	// Just use ProgramData to store config files
 	return system_data_path() + "/config";
 #elif defined(__unix__) or defined(__MACH__)
-	const char *path = "/etc/proyekgen";
-	stringstream stream;
-
-	if (!std::filesystem::is_directory(path)) {
-		throw UnixNoPathPreservedError("Unable to locate system config files.");
-	}
-
-	stream << path;
-	return stream.str();
+	// Every *nix system has a /etc directory
+	return "/etc/proyekgen";
 #endif
 	// If OS has no specific implementation, return an empty string.
 	return string();
@@ -189,15 +182,7 @@ string SystemPaths::system_data_path()
 
 	return result;
 #elif defined(__unix__) or defined(__MACH__)
-	const char *path = "/var/lib";
-	stringstream stream;
-
-	if (std::filesystem::is_directory(path)) {
-		throw UnixNoPathPreservedError("Unable to locate system data files.");
-	}
-
-	stream << path << "/proyekgen";
-	return stream.str();
+	return "/var/lib/proyekgen";
 #endif
 	// If OS has no specific implementation, return an empty string.
 	return string();
