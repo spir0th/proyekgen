@@ -44,7 +44,7 @@ string SystemPaths::executable_path()
 
 	return path_str;
 #elif defined(__unix__) or defined(__MACH__)
-	char result[PATH_MAX];
+	char result[PATH_MAX] = {};
 	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
 	return string(result, (count > 0) ? count : 0);
 #endif
