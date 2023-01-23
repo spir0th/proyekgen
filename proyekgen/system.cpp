@@ -72,7 +72,8 @@ string SystemPaths::data_path()
 
 vector<string> SystemPaths::template_paths()
 {
-	return {system_templates_path(), local_templates_path()};
+	return {system_templates_path(), local_templates_path(),
+		filesystem::current_path().string() + "/.proyekgen"};
 }
 
 string SystemPaths::local_config_path()

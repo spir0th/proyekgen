@@ -1,10 +1,24 @@
 #pragma once
 #include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <iterator>
 #include <string>
+#include <vector>
 
+#include "archive.h"
+#include "archive_entry.h"
+#include "config.h"
+#include "system.h"
+
+namespace filesystem = std::filesystem;
+
+using dir_entry = std::filesystem::directory_entry;
 using filepath = std::filesystem::path;
+using file_input = std::ifstream;
+using std::make_move_iterator;
 using string = std::string;
+using std::vector;
 
 enum class TemplatePlatform
 {
@@ -12,26 +26,41 @@ enum class TemplatePlatform
 };
 
 /*
-A class that holds the template's information.
+A class that contains the template's information.
 */
 class TemplateInfo
 {
 public:
-	TemplateInfo(string name, string author, TemplatePlatform *platform = nullptr);
+	TemplateInfo(string name, string author);
+
+	string name();
+	string author();
 
 private:
-	string *_name = nullptr;
-	string *_author = nullptr;
-	TemplatePlatform _platform = TemplatePlatform::Any;
+	string _name;
+	string _author;
+	TemplatePlatform _platform;
 };
 
 /*
-A class that holds the template's project data.
+A class that carries the template's project data.
 */
 class TemplateProject
 {
 public:
-	TemplateProject();
+	enum class ExtractResult
+	{
+		Good = 0, Bad = 1
+	};
+	
+	TemplateProject(string path);
+
+	ExtractResult extract();
+
+private:
+	int copy(struct archive *r, struct archive *w);
+
+	string _path;
 };
 
 /*
@@ -46,14 +75,26 @@ public:
 	TemplateProject project();
 
 private:
-	TemplateInfo *_info = nullptr;
-	TemplateProject *_project = nullptr;
+	TemplateInfo _info;
+	TemplateProject _project;
 };
 
 /*
-A helper class that manages templates easily.
+A class that manages templates easily.
 */
 class TemplateLibrary
 {
+public:
+	TemplateLibrary();
 
+	vector<string> list();
+	Template get(const string &name);
+	bool remove(string name);
+	bool exists(const string &name);
+
+private:
+	string get_path(const string &name);
+
+	json config = json::object();
+	vector<string> search_paths = SystemPaths::template_paths();
 };

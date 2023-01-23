@@ -8,6 +8,8 @@
 #include "nlohmann/json.hpp"
 #include "system.h"
 
+namespace filesystem = std::filesystem;
+
 using filepath = std::filesystem::path;
 using file_input = std::ifstream;
 using file_output = std::ofstream;

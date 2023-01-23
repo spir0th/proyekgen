@@ -1,5 +1,6 @@
 #include "console.h"
 #include "system.h"
+#include "template.h"
 
 int main(int argc, char *argv[])
 {
@@ -26,5 +27,9 @@ int main(int argc, char *argv[])
 		print << "no" << newline;
 	}
 
+	print << "Testing template info:" << newline;
+	Template test_template = TemplateLibrary().get("test");
+	print << "	name: " << test_template.info().name() << newline;
+	print << "	author: " << test_template.info().author() << newline;
 	return 0;
 }

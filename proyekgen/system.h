@@ -15,6 +15,8 @@
 #include "unistd.h"
 #endif
 
+namespace filesystem = std::filesystem;
+
 using std::back_inserter;
 using string = std::string;
 using stringstream = std::stringstream;
