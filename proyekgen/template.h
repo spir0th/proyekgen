@@ -19,14 +19,16 @@ A class that contains the template's information.
 class TemplateInfo
 {
 public:
-	TemplateInfo(string name, string author);
+	TemplateInfo(string name, string author, string path = string());
 
 	string name();
 	string author();
+	string path();
 
 private:
 	string _name;
 	string _author;
+	string _path;
 	TemplatePlatform _platform;
 };
 

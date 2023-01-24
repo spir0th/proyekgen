@@ -31,5 +31,6 @@ int main(int argc, char *argv[])
 	Template test_template = TemplateLibrary().get("test");
 	print << "	name: " << test_template.info().name() << newline;
 	print << "	author: " << test_template.info().author() << newline;
+	print << "	path: " << test_template.info().path() << newline;
 	return 0;
 }

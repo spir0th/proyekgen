@@ -1,7 +1,7 @@
 #include "template.h"
 
-TemplateInfo::TemplateInfo(string name, string author)
-	: _name(name), _author(author), _platform(TemplatePlatform::Any)
+TemplateInfo::TemplateInfo(string name, string author, string path)
+	: _name(name), _author(author), _path(path), _platform(TemplatePlatform::Any)
 {}
 
 string TemplateInfo::name()
@@ -12,6 +12,11 @@ string TemplateInfo::name()
 string TemplateInfo::author()
 {
 	return _author;
+}
+
+string TemplateInfo::path()
+{
+	return _path;
 }
 
 TemplateProject::TemplateProject(string path)
@@ -177,7 +182,7 @@ Template TemplateLibrary::get(const string &name)
 
 	string info_name = filepath(full_path).filename().string();
 	string info_author = info_json["author"];
-	TemplateInfo info = TemplateInfo(info_name, info_author);
+	TemplateInfo info = TemplateInfo(info_name, info_author, full_path);
 
 	// project.tar.xz
 	TemplateProject project = TemplateProject(project_path);
