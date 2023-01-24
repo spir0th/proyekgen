@@ -14,9 +14,11 @@
 #if defined(_WIN32)
 #include <Windows.h>
 #include <ShlObj.h>
+#define path_separator "\\"
 #elif defined(__unix__) or defined(__MACH__)
 #include "limits.h"
 #include "unistd.h"
+#define path_separator "/"
 #endif
 
 #include "archive.h"

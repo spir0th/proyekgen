@@ -151,8 +151,8 @@ vector<string> TemplateLibrary::list()
 			continue;
 		}
 		for (const dir_entry &entry : filesystem::directory_iterator{path}) {
-			string project = entry.path().string() + "/project.tar.xz";
-			string info = entry.path().string() + "/info.json";
+			string project = entry.path().string() + path_separator + "project.tar.xz";
+			string info = entry.path().string() + path_separator + "info.json";
 
 			if (!filesystem::is_regular_file(project) || !filesystem::is_regular_file(info)) {
 					continue;
@@ -172,8 +172,8 @@ Template TemplateLibrary::get(const string &name)
 	}
 
 	string full_path = get_path(name);
-	string project_path = full_path + "/project.tar.xz";
-	string info_path = full_path + "/info.json";
+	string project_path = full_path + path_separator + "project.tar.xz";
+	string info_path = full_path + path_separator + "info.json";
 
 	// info.json
 	json info_json = json::object();
@@ -198,8 +198,8 @@ bool TemplateLibrary::remove(string name)
 	}
 	if (filepath(name).is_relative()) {
 		for (string t : list()) {
-			string project = t + "/project.tar.xz";
-			string info = t + "/info.json";
+			string project = t + path_separator + "project.tar.xz";
+			string info = t + path_separator + "info.json";
 
 			if (!filesystem::is_directory(t)) {
 				continue;
@@ -210,7 +210,7 @@ bool TemplateLibrary::remove(string name)
 				continue;
 			}
 
-			name = t + "/" + name;
+			name = t + path_separator + name;
 		}
 	}
 
@@ -221,8 +221,8 @@ bool TemplateLibrary::remove(string name)
 bool TemplateLibrary::exists(const string &name)
 {
 	string path = get_path(name);
-	string project = path + "/project.tar.xz";
-	string info = path + "/info.json";
+	string project = path + path_separator + "project.tar.xz";
+	string info = path + path_separator + "info.json";
 
 	if (filesystem::is_directory(path) &&
 		filesystem::is_regular_file(project) &&
@@ -239,8 +239,8 @@ string TemplateLibrary::get_path(const string &name)
 
 	if (filepath(path).is_relative()) {
 		for (string t : list()) {
-			string project = t + "/project.tar.xz";
-			string info = t + "/info.json";
+			string project = t + path_separator + "project.tar.xz";
+			string info = t + path_separator + "info.json";
 
 			if (!filesystem::is_directory(t) ||
 				!filesystem::is_regular_file(project) ||

@@ -73,14 +73,14 @@ string SystemPaths::data_path()
 vector<string> SystemPaths::template_paths()
 {
 	return {system_templates_path(), local_templates_path(),
-		filesystem::current_path().string() + "/.proyekgen"};
+		filesystem::current_path().string() + path_separator + ".proyekgen"};
 }
 
 string SystemPaths::local_config_path()
 {
 #if defined(_WIN32)
 	// Just use LocalAppData to store config files
-	return local_data_path() + "/config";
+	return local_data_path() + "\\config";
 #elif defined(__unix__) or defined(__MACH__)
 	const char *path = getenv("XDG_CONFIG_HOME");
 	const char *fallback_path = getenv("HOME");
@@ -105,7 +105,7 @@ string SystemPaths::system_config_path()
 {
 #if defined(_WIN32)
 	// Just use ProgramData to store config files
-	return system_data_path() + "/config";
+	return system_data_path() + "\\config";
 #elif defined(__unix__) or defined(__MACH__)
 	// Every *nix system has a /etc directory
 	return "/etc/proyekgen";
@@ -129,7 +129,7 @@ string SystemPaths::local_data_path()
 	wstringstream stream;
 	wstring w_result;
 	string result;
-	stream << path << "/proyekgen";
+	stream << path << path_separator << "proyekgen";
 	CoTaskMemFree(static_cast<void*>(path));
 	w_result = stream.str();
 
@@ -173,7 +173,7 @@ string SystemPaths::system_data_path()
 	wstringstream stream;
 	wstring w_result;
 	string result;
-	stream << path << "/proyekgen";
+	stream << path << path_separator << "proyekgen";
 	CoTaskMemFree(static_cast<void*>(path));
 	w_result = stream.str();
 
@@ -191,10 +191,10 @@ string SystemPaths::system_data_path()
 
 string SystemPaths::local_templates_path()
 {
-	return local_data_path() + "/templates";
+	return local_data_path() + path_separator + "templates";
 }
 
 string SystemPaths::system_templates_path()
 {
-	return system_data_path() + "/templates";
+	return system_data_path() + path_separator + "templates";
 }

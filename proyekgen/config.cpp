@@ -2,22 +2,22 @@
 
 string ConfigPaths::generator()
 {
-	return SystemPaths::config_path() + "/generator.json";
+	return SystemPaths::config_path() + path_separator + "generator.json";
 }
 
 string ConfigPaths::global()
 {
-	return SystemPaths::config_path() + "/globals.json";
+	return SystemPaths::config_path() + path_separator + "globals.json";
 }
 
 string ConfigPaths::templates()
 {
-	return SystemPaths::config_path() + "/templates.json";
+	return SystemPaths::config_path() + path_separator + "templates.json";
 }
 
 string ConfigPaths::version()
 {
-	return SystemPaths::config_path() + "/version.json";
+	return SystemPaths::config_path() + path_separator + "version.json";
 }
 
 json Config::generator()
