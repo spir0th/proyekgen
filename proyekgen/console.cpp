@@ -57,36 +57,41 @@ Console& Console::operator>>(pair<const string&, int> args)
 void Console::log(const char *ch)
 {
 	paint();
-	std::cout << ch;
+	std::cout << tag;
 	end_paint();
+	std::cout << ch;
 }
 
 void Console::log(const string& str)
 {
 	paint();
-	std::cout << str;
+	std::cout << tag;
 	end_paint();
+	std::cout << str;
 }
 
 void Console::log(int num)
 {
 	paint();
-	std::cout << num;
+	std::cout << tag;
 	end_paint();
+	std::cout << num;
 }
 
 void Console::log(long num)
 {
 	paint();
-	std::cout << num;
+	std::cout << tag;
 	end_paint();
+	std::cout << num;
 }
 
 void Console::log(double num)
 {
 	paint();
-	std::cout << num;
+	std::cout << tag;
 	end_paint();
+	std::cout << num;
 }
 
 void Console::input(const string& msg, string out)
