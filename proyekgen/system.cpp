@@ -29,6 +29,9 @@ bool SystemRuntime::is_admin_or_root()
 	return false;
 }
 
+SystemPaths::SystemPaths()
+{}
+
 string SystemPaths::executable_path()	
 {
 #if defined(_WIN32)

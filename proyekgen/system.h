@@ -2,8 +2,6 @@
 #include "error.h"
 #include "global.h"
 
-namespace filesystem = std::filesystem;
-
 using std::back_inserter;
 using std::transform;
 
@@ -16,14 +14,18 @@ public:
 class SystemPaths
 {
 public:
+	SystemPaths();
+
 	static string executable_path();
 	static string config_path();
 	static string data_path();
 	static vector<string> template_paths();
-	static string local_config_path();
-	static string system_config_path();
-	static string local_data_path();
-	static string system_data_path();
-	static string local_templates_path();
-	static string system_templates_path();
+
+private:
+	string local_config_path();
+	string system_config_path();
+	string local_data_path();
+	string system_data_path();
+	string local_templates_path();
+	string system_templates_path();
 };
