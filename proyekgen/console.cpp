@@ -2,15 +2,11 @@
 
 Console::Console(MessagePriority priority)
 	: _priority(priority) 
-{
-	init();
-}
+{}
 
 Console::Console()
 	: _priority(MessagePriority::Normal)
-{
-	init();
-}
+{}
 
 Console& Console::operator<<(const char* ch)
 {
@@ -57,41 +53,36 @@ Console& Console::operator>>(pair<const string&, int> args)
 void Console::log(const char *ch)
 {
 	paint();
-	std::cout << tag;
-	end_paint();
 	std::cout << ch;
+	end_paint();
 }
 
 void Console::log(const string& str)
 {
 	paint();
-	std::cout << tag;
-	end_paint();
 	std::cout << str;
+	end_paint();
 }
 
 void Console::log(int num)
 {
 	paint();
-	std::cout << tag;
-	end_paint();
 	std::cout << num;
+	end_paint();
 }
 
 void Console::log(long num)
 {
 	paint();
-	std::cout << tag;
-	end_paint();
 	std::cout << num;
+	end_paint();
 }
 
 void Console::log(double num)
 {
 	paint();
-	std::cout << tag;
-	end_paint();
 	std::cout << num;
+	end_paint();
 }
 
 void Console::input(const string& msg, string out)
@@ -109,24 +100,6 @@ void Console::input(const string& msg, int out)
 string Console::end()
 {
 	return "\n";
-}
-
-void Console::init()
-{
-	switch (_priority) {
-		case MessagePriority::Debug:
-			tag = "[DEBUG]";
-			break;
-		case MessagePriority::Warning:
-			tag = "[WARNING]";
-			break;
-		case MessagePriority::Error:
-			tag = "[ERROR]";
-			break;
-		default:
-			tag = "[INFO]";
-			break;
-	}
 }
 
 /*

@@ -45,10 +45,8 @@ public:
 	static string end();
 
 private:
-	void init();
 	void paint();
 	void end_paint();
 
 	MessagePriority _priority;
-	string tag;
 };
