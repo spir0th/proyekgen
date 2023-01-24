@@ -1,24 +1,12 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <iterator>
-#include <string>
-#include <vector>
-
-#include "archive.h"
-#include "archive_entry.h"
 #include "config.h"
+#include "console.h"
+#include "global.h"
 #include "system.h"
 
 namespace filesystem = std::filesystem;
 
-using dir_entry = std::filesystem::directory_entry;
-using filepath = std::filesystem::path;
-using file_input = std::ifstream;
 using std::make_move_iterator;
-using string = std::string;
-using std::vector;
 
 enum class TemplatePlatform
 {

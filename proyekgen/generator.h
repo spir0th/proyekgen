@@ -1,6 +1,5 @@
 #pragma once
-#include <iostream>
-
+#include "global.h"
 #include "template.h"
 
 class Generator

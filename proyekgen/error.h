@@ -1,8 +1,5 @@
 #pragma once
-#include <exception>
-#include <filesystem>
-#include <iostream>
-#include <string>
+#include "global.h"
 
 using runtime_error = std::runtime_error;
 using filesystem_error = std::filesystem::filesystem_error;

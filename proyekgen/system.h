@@ -1,29 +1,11 @@
 #pragma once
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-
 #include "error.h"
-
-#if defined(_WIN32)
-#include <Windows.h>
-#include <ShlObj.h>
-#elif defined(__unix__) or defined(__MACH__)
-#include "limits.h"
-#include "unistd.h"
-#endif
+#include "global.h"
 
 namespace filesystem = std::filesystem;
 
 using std::back_inserter;
-using string = std::string;
-using stringstream = std::stringstream;
-using std::vector;
 using std::transform;
-using wstring = std::wstring;
-using wstringstream = std::wstringstream;
 
 class SystemRuntime
 {

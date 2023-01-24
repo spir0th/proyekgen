@@ -1,10 +1,5 @@
 #pragma once
-#include <iostream>
-#include <string>
-
-#if defined(_WIN32)
-#include <Windows.h>
-#endif
+#include "global.h"
 
 #define print Console()
 #define print_debug Console(MessagePriority::Debug)

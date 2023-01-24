@@ -1,20 +1,8 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
-#include <string>
-
 #include "console.h"
 #include "error.h"
-#include "nlohmann/json.hpp"
+#include "global.h"
 #include "system.h"
-
-namespace filesystem = std::filesystem;
-
-using filepath = std::filesystem::path;
-using file_input = std::ifstream;
-using file_output = std::ofstream;
-using string = std::string;
-using json = nlohmann::json;
 
 /*
 A helper class to locate config files.
