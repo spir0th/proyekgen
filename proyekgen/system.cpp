@@ -1,5 +1,16 @@
 #include "system.h"
 
+vector<string> SystemRuntime::args()
+{
+	vector<string> args;
+
+	if (_argc > 1) {
+		args.assign(_argv + 1, _argv + _argc);
+	}
+
+	return args;
+}
+
 void SystemRuntime::catch_termination()
 {
 	set_terminate([]() {
@@ -14,6 +25,12 @@ void SystemRuntime::catch_termination()
 
 		std::abort(); // Accessing this function from std namespace
 	});
+}
+
+void SystemRuntime::init(int argc, char *argv[])
+{
+	_argc = argc;
+	_argv = argv;
 }
 
 bool SystemRuntime::is_admin_or_root()
@@ -47,25 +64,7 @@ bool SystemRuntime::is_admin_or_root()
 
 string SystemPaths::executable_path()
 {
-#if defined(_WIN32)
-	wchar_t path[MAX_PATH] = {0};
-	string path_str = "";
-	wstring w_path_str = L"";
-	GetModuleFileNameW(NULL, path, MAX_PATH);
-	w_path_str = path;
-
-	transform(w_path_str.begin(), w_path_str.end(), back_inserter(path_str), [](wchar_t c) {
-		return (char)c;
-	});
-
-	return path_str;
-#elif defined(__unix__) or defined(__MACH__)
-	char result[PATH_MAX] = {};
-	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-	return string(result, (count > 0) ? count : 0);
-#endif
-	// If OS has no specific implementation, return an empty string.
-	return string();
+	return _argv[0]; // We use command-line arguments to get the path.
 }
 
 string SystemPaths::config_path()

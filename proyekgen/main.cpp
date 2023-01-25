@@ -2,9 +2,21 @@
 #include "system.h"
 #include "template.h"
 
+int _argc = 0;
+char **_argv = {};
+
 int main(int argc, char *argv[])
 {
+	SystemRuntime::init(argc, argv);
 	SystemRuntime::catch_termination();
+	
+	if (SystemRuntime::args().size() > 0) {
+		print << "Command-line arguments:" << newline;
+	}
+	for (const string& arg : SystemRuntime::args()) {
+		print << "	" << arg << newline;
+	}
+
 	print << "Begin console test:" << newline;
 	print << "	This is a normal message" << newline;
 	print_debug << "	This is a debug message, the \"--debug\" command-line option will reveal the messages that have this priority." << newline;
