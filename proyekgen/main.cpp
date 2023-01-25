@@ -4,6 +4,7 @@
 
 int main(int argc, char *argv[])
 {
+	SystemRuntime::catch_termination();
 	print << "Begin console test:" << newline;
 	print << "	This is a normal message" << newline;
 	print_debug << "	This is a debug message, the \"--debug\" command-line option will reveal the messages that have this priority." << newline;

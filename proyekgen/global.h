@@ -28,6 +28,8 @@
 namespace filesystem = std::filesystem;
 
 using dir_entry = std::filesystem::directory_entry;
+using exception = std::exception;
+using exception_ptr = std::exception_ptr;
 using filepath = std::filesystem::path;
 using file_input = std::ifstream;
 using file_output = std::ofstream;

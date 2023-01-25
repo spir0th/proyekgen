@@ -1,5 +1,21 @@
 #include "system.h"
 
+void SystemRuntime::catch_termination()
+{
+	set_terminate([]() {
+		exception_ptr ptr = current_exception();
+		
+		try {
+			rethrow_exception(ptr);
+		} catch (exception ex) {
+			print_error << ex.what() << newline;
+			print << ""; // Reset current console text color
+		}
+
+		std::abort(); // Accessing this function from std namespace
+	});
+}
+
 bool SystemRuntime::is_admin_or_root()
 {
 #if defined(_WIN32)
