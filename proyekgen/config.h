@@ -1,8 +1,10 @@
 #pragma once
-#include "console.h"
 #include "error.h"
 #include "global.h"
 #include "system.h"
+
+using std::make_exception_ptr;
+using std::rethrow_exception;
 
 /*
 A helper class to locate config files.
