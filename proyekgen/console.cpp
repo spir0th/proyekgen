@@ -53,48 +53,80 @@ Console& Console::operator>>(pair<const string&, int> args)
 void Console::log(const char *ch)
 {
 	paint();
-	std::cout << ch;
+
+	if (_priority != ConsolePriority::Error) {
+		cout << ch;
+	} else {
+		clog << ch;
+	}
+
 	end_paint();
 }
 
 void Console::log(const string& str)
 {
 	paint();
-	std::cout << str;
+
+	if (_priority != ConsolePriority::Error) {
+		cout << str;
+	} else {
+		clog << str;
+	}
+
 	end_paint();
 }
 
 void Console::log(int num)
 {
 	paint();
-	std::cout << num;
+
+	if (_priority != ConsolePriority::Error) {
+		cout << num;
+	} else {
+		clog << num;
+	}
+
 	end_paint();
 }
 
 void Console::log(long num)
 {
 	paint();
-	std::cout << num;
+
+	if (_priority != ConsolePriority::Error) {
+		cout << num;
+	} else {
+		clog << num;
+	}
+
 	end_paint();
 }
 
 void Console::log(double num)
 {
 	paint();
-	std::cout << num;
+
+	if (_priority != ConsolePriority::Error) {
+		cout << num;
+	} else {
+		clog << num;
+	}
+
 	end_paint();
 }
 
 void Console::input(const string& msg, string out)
 {
-	std::cout << msg;
-	std::getline(std::cin, out);
+	cout << msg + " ";
+	getline(cin, out);
+	cout << end();
 }
 
 void Console::input(const string& msg, int out)
 {
-	std::cout << msg;
-	std::cin >> out;
+	cout << msg + " ";
+	cin >> out;
+	cout << end();
 }
 
 string Console::end()

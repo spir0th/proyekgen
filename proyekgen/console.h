@@ -7,6 +7,11 @@
 #define print_error Console(ConsolePriority::Error)
 #define newline Console::end()
 
+using std::cin;
+using std::cout;
+using std::clog;
+using std::getline;
+
 enum class ConsolePriority
 {
 	Normal = 0, Debug = 1, Warning = 2, Error = 3
