@@ -31,11 +31,13 @@ using dir_entry = std::filesystem::directory_entry;
 using filepath = std::filesystem::path;
 using file_input = std::ifstream;
 using file_output = std::ofstream;
+using json = nlohmann::json;
 template<class Key, class T>
 using map = std::map<Key, std::less<Key>, std::allocator<std::pair<const Key, T>>>;
+template<class Key, class T>
+using pair = std::pair<Key, T>;
 using string = std::string;
 using stringstream = std::stringstream;
-using json = nlohmann::json;
 template<class T>
 using vector = std::vector<T, std::allocator<T>>;
 using wstring = std::wstring;

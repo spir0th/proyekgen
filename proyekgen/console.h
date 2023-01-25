@@ -7,9 +7,6 @@
 #define print_error Console(MessagePriority::Error)
 #define newline Console::end()
 
-using std::pair;
-using string = std::string;
-
 enum class MessagePriority
 {
 	Normal = 0, Debug = 1, Warning = 2, Error = 3
