@@ -54,9 +54,7 @@ bool SystemRuntime::is_admin_or_root()
 
 	return is_admin;
 #elif defined(__unix__) or defined(__MACH__)
-	uid_t public_uid = getuid();
-	uid_t private_uid = geteuid();
-	return public_uid != private_uid;
+	return geteuid() == 0;
 #endif
 	// By default, this function returns false if no implementation was coded for the current OS
 	return false;
