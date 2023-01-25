@@ -1,11 +1,11 @@
 #include "console.h"
 
-Console::Console(MessagePriority priority)
+Console::Console(ConsolePriority priority)
 	: _priority(priority) 
 {}
 
 Console::Console()
-	: _priority(MessagePriority::Normal)
+	: _priority(ConsolePriority::Normal)
 {}
 
 Console& Console::operator<<(const char* ch)
@@ -111,13 +111,13 @@ void Console::paint()
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	switch (_priority) {
-		case MessagePriority::Debug:
+		case ConsolePriority::Debug:
 			SetConsoleTextAttribute(console, 8);
 			break;
-		case MessagePriority::Warning:
+		case ConsolePriority::Warning:
 			SetConsoleTextAttribute(console, 6);
 			break;
-		case MessagePriority::Error:
+		case ConsolePriority::Error:
 			SetConsoleTextAttribute(console, 4);
 			break;
 		default:
@@ -128,13 +128,13 @@ void Console::paint()
 	using std::cout;
 
 	switch (_priority) {
-		case MessagePriority::Debug:
+		case ConsolePriority::Debug:
 			cout << "\033[90m";
 			break;
-		case MessagePriority::Warning:
+		case ConsolePriority::Warning:
 			cout << "\033[33m";
 			break;
-		case MessagePriority::Error:
+		case ConsolePriority::Error:
 			cout << "\033[31m";
 			break;
 		default:

@@ -2,12 +2,12 @@
 #include "global.h"
 
 #define print Console()
-#define print_debug Console(MessagePriority::Debug)
-#define print_warning Console(MessagePriority::Warning)
-#define print_error Console(MessagePriority::Error)
+#define print_debug Console(ConsolePriority::Debug)
+#define print_warning Console(ConsolePriority::Warning)
+#define print_error Console(ConsolePriority::Error)
 #define newline Console::end()
 
-enum class MessagePriority
+enum class ConsolePriority
 {
 	Normal = 0, Debug = 1, Warning = 2, Error = 3
 };
@@ -15,7 +15,7 @@ enum class MessagePriority
 class Console
 {
 public:
-	Console(MessagePriority priority);
+	Console(ConsolePriority priority);
 	Console();
 
 	Console& operator<<(const char *ch);
@@ -40,5 +40,5 @@ private:
 	void paint();
 	void end_paint();
 
-	MessagePriority _priority;
+	ConsolePriority _priority;
 };
