@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <chrono>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -27,6 +28,7 @@
 #include "archive_entry.h"
 #include "nlohmann/json.hpp"
 
+namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
 using dir_entry = std::filesystem::directory_entry;
@@ -40,6 +42,7 @@ template<class Key, class T>
 using map = std::map<Key, std::less<Key>, std::allocator<std::pair<const Key, T>>>;
 template<class Key, class T>
 using pair = std::pair<Key, T>;
+using steady_clock = std::chrono::steady_clock;
 using string = std::string;
 using stringstream = std::stringstream;
 template<class T>

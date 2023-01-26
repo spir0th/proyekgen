@@ -50,9 +50,9 @@ int main(int argc, char *argv[])
 
 	// Parse existing template and generate it's project data into the output path
 	Template _template = library.get(template_name); // Screw you "template" keyword
+	steady_clock::time_point start = steady_clock::now();
 
 	if (is_verbose) {
-		print_verbose << newline;
 		print_verbose << "Template:" << newline;
 		print_verbose << "	name: " << _template.info().name() << newline;
 		print_verbose << "	author: " << _template.info().author() << newline;
@@ -67,5 +67,10 @@ int main(int argc, char *argv[])
 	}
 
 	_template.project().extract(output_path, is_verbose);
+
+	// Print elapsed time at the end of process
+	steady_clock::time_point end = steady_clock::now();
+	long long elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
+	print << "Finished at " << elapsed << "ms." << newline;
 	return 0;
 }
