@@ -62,7 +62,25 @@ bool SystemRuntime::is_admin_or_root()
 
 string SystemPaths::executable_path()
 {
-	return _argv[0]; // We use command-line arguments to get the path.
+#if defined(_WIN32)
+	wchar_t path[MAX_PATH] = {0};
+	string path_str = "";
+	wstring w_path_str = L"";
+	GetModuleFileNameW(NULL, path, MAX_PATH);
+	w_path_str = path;
+
+	transform(w_path_str.begin(), w_path_str.end(), back_inserter(path_str), [](wchar_t c) {
+		return (char)c;
+		});
+
+	return path_str;
+#elif defined(__unix__) or defined(__MACH__)
+	char result[PATH_MAX] = {};
+	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+	return string(result, (count > 0) ? count : 0);
+#endif
+	// If OS has no specific implementation, return an empty string.
+	return string();
 }
 
 string SystemPaths::config_path()
