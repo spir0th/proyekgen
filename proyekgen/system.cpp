@@ -64,16 +64,16 @@ string SystemPaths::executable_path()
 {
 #if defined(_WIN32)
 	wchar_t path[MAX_PATH] = {0};
-	string path_str = "";
-	wstring w_path_str = L"";
+	wstring w_result;
+	string result;
 	GetModuleFileNameW(NULL, path, MAX_PATH);
-	w_path_str = path;
+	w_result = path;
 
-	transform(w_path_str.begin(), w_path_str.end(), back_inserter(path_str), [](wchar_t c) {
+	transform(w_result.begin(), w_result.end(), back_inserter(result), [](wchar_t c) {
 		return (char)c;
-		});
+	});
 
-	return path_str;
+	return result;
 #elif defined(__unix__) or defined(__MACH__)
 	char result[PATH_MAX] = {};
 	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
