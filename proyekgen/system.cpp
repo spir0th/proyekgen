@@ -75,9 +75,9 @@ string SystemPaths::executable_path()
 
 	return result;
 #elif defined(__unix__) or defined(__MACH__)
-	char result[PATH_MAX] = {};
-	ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
-	return string(result, (count > 0) ? count : 0);
+	char p[PATH_MAX] = {};
+	ssize_t c = readlink("/proc/self/exe", p, PATH_MAX);
+	return string(p, (c > 0) ? c : 0);
 #endif
 	// If OS has no specific implementation, return an empty string.
 	return string();
