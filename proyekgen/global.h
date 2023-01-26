@@ -14,6 +14,8 @@
 #if defined(_WIN32)
 #include <Windows.h>
 #include <ShlObj.h>
+#include <direct.h>
+#define chdir _chdir
 #define path_separator "\\"
 #elif defined(__unix__) or defined(__MACH__)
 #include "limits.h"

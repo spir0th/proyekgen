@@ -1,14 +1,8 @@
 #include "system.h"
 
-vector<string> SystemRuntime::args()
+CommandLineArguments SystemRuntime::args()
 {
-	vector<string> args;
-
-	if (_argc > 1) {
-		args.assign(_argv + 1, _argv + _argc);
-	}
-
-	return args;
+	return _cmd_args;
 }
 
 void SystemRuntime::catch_termination()
@@ -29,8 +23,7 @@ void SystemRuntime::catch_termination()
 
 void SystemRuntime::init(int argc, char *argv[])
 {
-	_argc = argc;
-	_argv = argv;
+	_cmd_args = _parse_cmd_args(argc, argv);
 }
 
 bool SystemRuntime::is_admin_or_root()
@@ -83,6 +76,11 @@ string SystemPaths::executable_path()
 	return string();
 }
 
+string SystemPaths::current_path()
+{
+	return filesystem::current_path().string();
+}
+
 string SystemPaths::config_path()
 {
 	if (!SystemRuntime::is_admin_or_root()) {
@@ -104,7 +102,7 @@ string SystemPaths::data_path()
 vector<string> SystemPaths::template_paths()
 {
 	return {system_templates_path(), local_templates_path(),
-		filesystem::current_path().string() + path_separator + ".proyekgen"};
+		current_path() + path_separator + ".proyekgen"};
 }
 
 string SystemPaths::local_config_path()

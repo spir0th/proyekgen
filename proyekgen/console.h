@@ -1,8 +1,10 @@
 #pragma once
 #include "global.h"
+#include "system.h"
 
+#define input Console().ask
 #define print Console()
-#define print_debug Console(ConsolePriority::Debug)
+#define print_verbose Console(ConsolePriority::Verbose)
 #define print_warning Console(ConsolePriority::Warning)
 #define print_error Console(ConsolePriority::Error)
 #define newline Console::end()
@@ -14,7 +16,7 @@ using std::getline;
 
 enum class ConsolePriority
 {
-	Normal = 0, Debug = 1, Warning = 2, Error = 3
+	Normal = 0, Verbose = 1, Warning = 2, Error = 3
 };
 
 class Console
@@ -28,16 +30,13 @@ public:
 	Console& operator<<(int num);
 	Console& operator<<(long num);
 	Console& operator<<(double num);
-	Console& operator>>(pair<const string&, string> args);
-	Console& operator>>(pair<const string&, int> args);
 
 	void log(const char *ch);
 	void log(const string &str);
 	void log(int num);
 	void log(long num);
 	void log(double num);
-	void input(const string &msg, string out);
-	void input(const string &msg, int out);
+	string ask(const string &msg);
 
 	static string end();
 

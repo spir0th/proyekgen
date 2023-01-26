@@ -38,22 +38,9 @@ Console& Console::operator<<(double num)
 	return *this;
 }
 
-Console& Console::operator>>(pair<const string&, string> args)
-{
-	input(args.first, args.second);
-	return *this;
-}
-
-Console& Console::operator>>(pair<const string&, int> args)
-{
-	input(args.first, args.second);
-	return *this;
-}
-
 void Console::log(const char *ch)
 {
 	paint();
-
 	if (_priority != ConsolePriority::Error) {
 		cout << ch;
 	} else {
@@ -115,18 +102,13 @@ void Console::log(double num)
 	end_paint();
 }
 
-void Console::input(const string& msg, string out)
+string Console::ask(const string& msg)
 {
+	string out;
 	cout << msg + " ";
 	getline(cin, out);
 	cout << end();
-}
-
-void Console::input(const string& msg, int out)
-{
-	cout << msg + " ";
-	cin >> out;
-	cout << end();
+	return out;
 }
 
 string Console::end()
@@ -143,7 +125,7 @@ void Console::paint()
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 
 	switch (_priority) {
-		case ConsolePriority::Debug:
+		case ConsolePriority::Verbose:
 			SetConsoleTextAttribute(console, 8);
 			break;
 		case ConsolePriority::Warning:
@@ -160,7 +142,7 @@ void Console::paint()
 	using std::cout;
 
 	switch (_priority) {
-		case ConsolePriority::Debug:
+		case ConsolePriority::Verbose:
 			cout << "\033[90m";
 			break;
 		case ConsolePriority::Warning:

@@ -38,14 +38,9 @@ A class that carries the template's project data.
 class TemplateProject
 {
 public:
-	enum class ExtractResult
-	{
-		Good = 0, Bad = 1
-	};
-	
 	TemplateProject(string path);
 
-	ExtractResult extract();
+	bool extract(const string &dest, bool verbose);
 
 private:
 	int copy(struct archive *r, struct archive *w);

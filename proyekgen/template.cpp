@@ -27,11 +27,12 @@ TemplateProject::TemplateProject(string path)
 	}
 }
 
-TemplateProject::ExtractResult TemplateProject::extract()
+bool TemplateProject::extract(const string &dest, bool verbose)
 {
 	struct archive *reader;
 	struct archive *writer;
 	struct archive_entry *entry;
+	string cwd = SystemPaths::current_path();
 	int result;
 	int flags;
 
@@ -39,6 +40,8 @@ TemplateProject::ExtractResult TemplateProject::extract()
 	flags |= ARCHIVE_EXTRACT_PERM;
 	flags |= ARCHIVE_EXTRACT_ACL;
 	flags |= ARCHIVE_EXTRACT_FFLAGS;
+
+	chdir(dest.c_str());
 
 	reader = archive_read_new();
 	archive_read_support_format_tar(reader);
@@ -61,10 +64,11 @@ TemplateProject::ExtractResult TemplateProject::extract()
 			print_error << archive_error_string(reader) << newline;
 		}
 		if (result < ARCHIVE_WARN) {
-			return TemplateProject::ExtractResult::Bad;
+			return false;
 		}
 
 		result = archive_write_header(writer, entry);
+		
 
 		if (result < ARCHIVE_OK) {
 			print_error << archive_error_string(writer) << newline;
@@ -75,7 +79,7 @@ TemplateProject::ExtractResult TemplateProject::extract()
 				print_error << archive_error_string(writer) << newline;
 			}
 			if (result < ARCHIVE_WARN) {
-				return TemplateProject::ExtractResult::Bad;
+				return false;
 			}
 		}
 
@@ -85,13 +89,14 @@ TemplateProject::ExtractResult TemplateProject::extract()
 			print_error << archive_error_string(writer) << newline;
 		}
 		if (result < ARCHIVE_WARN) {
-			return TemplateProject::ExtractResult::Bad;
+			return false;
 		}
 	}
 
 	archive_read_free(reader);
 	archive_write_free(writer);
-	return TemplateProject::ExtractResult::Good;
+	chdir(cwd.c_str());
+	return true;
 }
 
 int TemplateProject::copy(struct archive *r, struct archive *w)
@@ -180,13 +185,8 @@ Template TemplateLibrary::get(const string &name)
 	file_input info_stream(info_path);
 	info_json = json::parse(info_stream);
 
-	string info_name = info_json["name"];
+	string info_name = (info_json.contains("name")) ? (string)info_json["name"] : name;
 	string info_author = info_json["author"];
-
-	if (!info_json.contains("name")) {
-		// Workaround if the template didn't have a name entry set
-		info_name = filepath(full_path).filename().string();
-	}
 
 	TemplateInfo info = TemplateInfo(info_name, info_author, full_path);
 
