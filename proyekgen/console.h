@@ -29,12 +29,14 @@ public:
 	Console& operator<<(const string &str);
 	Console& operator<<(int num);
 	Console& operator<<(long num);
+	Console& operator<<(long long num);
 	Console& operator<<(double num);
 
 	void log(const char *ch);
 	void log(const string &str);
 	void log(int num);
 	void log(long num);
+	void log(long long num);
 	void log(double num);
 	string ask(const string &msg);
 

@@ -32,6 +32,12 @@ Console& Console::operator<<(long num)
 	return *this;
 }
 
+Console& Console::operator<<(long long num)
+{
+	log(num);
+	return *this;
+}
+
 Console& Console::operator<<(double num)
 {
 	log(num);
@@ -77,6 +83,19 @@ void Console::log(int num)
 }
 
 void Console::log(long num)
+{
+	paint();
+
+	if (_priority != ConsolePriority::Error) {
+		cout << num;
+	} else {
+		clog << num;
+	}
+
+	end_paint();
+}
+
+void Console::log(long long num)
 {
 	paint();
 
