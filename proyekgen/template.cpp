@@ -180,8 +180,14 @@ Template TemplateLibrary::get(const string &name)
 	file_input info_stream(info_path);
 	info_json = json::parse(info_stream);
 
-	string info_name = filepath(full_path).filename().string();
+	string info_name = info_json["name"];
 	string info_author = info_json["author"];
+
+	if (!info_json.contains("name")) {
+		// Workaround if the template didn't have a name entry set
+		info_name = filepath(full_path).filename().string();
+	}
+
 	TemplateInfo info = TemplateInfo(info_name, info_author, full_path);
 
 	// project.tar.xz
