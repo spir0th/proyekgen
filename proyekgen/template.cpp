@@ -27,7 +27,7 @@ TemplateProject::TemplateProject(string path)
 	}
 }
 
-bool TemplateProject::extract(const string &dest, bool verbose)
+bool TemplateProject::extract(const string &dest)
 {
 	struct archive *reader;
 	struct archive *writer;
@@ -68,7 +68,7 @@ bool TemplateProject::extract(const string &dest, bool verbose)
 		}
 
 		result = archive_write_header(writer, entry);
-		
+		print_verbose << "Extracting: " << archive_entry_pathname(entry) << newline;
 
 		if (result < ARCHIVE_OK) {
 			print_error << archive_error_string(writer) << newline;

@@ -47,6 +47,11 @@ Console& Console::operator<<(double num)
 void Console::log(const char *ch)
 {
 	paint();
+
+	if (_priority == ConsolePriority::Verbose && !_verbose) {
+		end_paint();
+		return;
+	}
 	if (_priority != ConsolePriority::Error) {
 		cout << ch;
 	} else {
@@ -60,6 +65,10 @@ void Console::log(const string& str)
 {
 	paint();
 
+	if (_priority == ConsolePriority::Verbose && !_verbose) {
+		end_paint();
+		return;
+	}
 	if (_priority != ConsolePriority::Error) {
 		cout << str;
 	} else {
@@ -73,6 +82,10 @@ void Console::log(int num)
 {
 	paint();
 
+	if (_priority == ConsolePriority::Verbose && !_verbose) {
+		end_paint();
+		return;
+	}
 	if (_priority != ConsolePriority::Error) {
 		cout << num;
 	} else {
@@ -86,6 +99,10 @@ void Console::log(long num)
 {
 	paint();
 
+	if (_priority == ConsolePriority::Verbose && !_verbose) {
+		end_paint();
+		return;
+	}
 	if (_priority != ConsolePriority::Error) {
 		cout << num;
 	} else {
@@ -99,6 +116,10 @@ void Console::log(long long num)
 {
 	paint();
 
+	if (_priority == ConsolePriority::Verbose && !_verbose) {
+		end_paint();
+		return;
+	}
 	if (_priority != ConsolePriority::Error) {
 		cout << num;
 	} else {
@@ -112,6 +133,10 @@ void Console::log(double num)
 {
 	paint();
 
+	if (_priority == ConsolePriority::Verbose && !_verbose) {
+		end_paint();
+		return;
+	}
 	if (_priority != ConsolePriority::Error) {
 		cout << num;
 	} else {
@@ -124,7 +149,7 @@ void Console::log(double num)
 string Console::ask(const string& msg)
 {
 	string out;
-	cout << msg + " ";
+	cout << msg;
 	getline(cin, out);
 	cout << end();
 	return out;

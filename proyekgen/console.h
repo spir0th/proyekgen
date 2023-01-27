@@ -14,6 +14,8 @@ using std::cout;
 using std::clog;
 using std::getline;
 
+extern bool _verbose;
+
 enum class ConsolePriority
 {
 	Normal = 0, Verbose = 1, Warning = 2, Error = 3

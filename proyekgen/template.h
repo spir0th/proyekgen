@@ -40,7 +40,7 @@ class TemplateProject
 public:
 	TemplateProject(string path);
 
-	bool extract(const string &dest, bool verbose);
+	bool extract(const string &dest);
 
 private:
 	int copy(struct archive *r, struct archive *w);
