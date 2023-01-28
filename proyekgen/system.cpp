@@ -153,7 +153,7 @@ string SystemPaths::local_data_path()
 #if defined(_WIN32)
 	wchar_t *path = 0;
 	HRESULT code = E_FAIL;
-	code = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);
+	code = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
 		// Failure of finding the LocalAppData location
