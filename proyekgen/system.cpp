@@ -1,10 +1,5 @@
 #include "system.h"
 
-CommandLineArguments SystemRuntime::args()
-{
-	return _cmd_args;
-}
-
 void SystemRuntime::catch_termination()
 {
 	set_terminate([]() {
@@ -24,11 +19,6 @@ void SystemRuntime::catch_termination()
 
 		std::abort(); // Accessing this function from std namespace
 	});
-}
-
-void SystemRuntime::init(int argc, char *argv[])
-{
-	_cmd_args = _parse_cmd_args(argc, argv);
 }
 
 bool SystemRuntime::is_admin_or_root()

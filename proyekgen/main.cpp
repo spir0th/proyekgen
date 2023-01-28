@@ -6,48 +6,62 @@
 // console.h
 bool _verbose;
 
-// template.h
-CommandLineArguments _cmd_args;
-
 int main(int argc, char *argv[])
 {
-	// Initialize command-line arguments, and setup terminate handler
-	SystemRuntime::init(argc, argv);
+	// Setup terminate handler
 	SystemRuntime::catch_termination();
 
 	// Declare and init command-line argument option variables (e.g help, version, verbose)
-	CommandLineArguments args = SystemRuntime::args();
-	bool is_help = args.exists("-h") || args.exists("--help");
-	bool is_version = args.exists("-v") || args.exists("--version");
-	_verbose = args.exists("--verbose");
+	cxxopts::Options args("proyekgen", "A simple and easy project generator.");
 
-	// Print out command-line arguments if verbose is enabled
-	print_verbose << "Command-line arguments:" << newline;
+	args.add_options("main")
+		("t,template", "Specify template name (or path)", cxxopts::value<string>()->default_value(string()))
+		("o,output", "Specify output directory", cxxopts::value<string>()->default_value(SystemPaths::current_path()));
+	args.add_options("misc")
+		("h,help", "View help information")
+		("v,version", "Print program version")
+		("verbose", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
 
-	for (const string &arg : args.data()) {
-		print_verbose << "	" << arg << newline;
-	}
+	args.allow_unrecognised_options();
+	args.parse_positional({"template"});
+	cxxopts::ParseResult result = args.parse(argc, argv);
 
-	// Generate a project using the given template on the command-line argument
-	vector<string> args_raw = args.data();
-	TemplateLibrary library;
-	string template_name;
-	string output_path;
+	_verbose = result["verbose"].as<bool>();
 
-	// Additional command-line argument parsing (for template name/path and output path)
-	if (args_raw.size() > 0) {
-		template_name = args_raw[0];
-	} else {
-		while (template_name.empty()) {
-			template_name = input("Specify template name or path: ");
+	// Print out command-line arguments in verbose
+	if (result.arguments().size() > 0) {
+		print_verbose << "Command-line arguments:" << newline;
+
+		for (const cxxopts::KeyValue &arg : result.arguments()) {
+			print_verbose << "	" << arg.key() << ": " << arg.value() << newline;
 		}
 	}
-	if (args.exists("-o")) {
-		output_path = args.get_string("-o");
-	} else if (args.exists("--output")) {
-		output_path = args.get_string("--output");
-	} else {
-		output_path = SystemPaths::current_path();
+	if (result.unmatched().size() > 0) {
+		print_verbose << "Ignored command-line arguments:" << newline;
+
+		for (const string &arg : result.unmatched()) {
+			print_verbose << "	" << arg << newline;
+		}
+	}
+
+	// Do specific code when some argument options were passed
+	if (result.count("help")) {
+		cxxopts::Options help = args.custom_help("<TEMPLATE> [OPTIONS...]");
+		print << help.positional_help(string()).help() << newline;
+		return EXIT_SUCCESS;
+	}
+	if (result.count("version")) {
+		print << "1.0.0" << newline;
+		return EXIT_SUCCESS;
+	}
+
+	// Generate a project using the given template from the command-line arguments
+	TemplateLibrary library;
+	string template_name = (result.count("template")) ? result["template"].as<string>() : string();
+	string output_path = result["output"].as<string>();
+
+	while (template_name.empty()) {
+		template_name = input("Specify template name (or path): ");
 	}
 
 	// Parse existing template and generate it's project data into the output path

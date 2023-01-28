@@ -1,5 +1,4 @@
 #pragma once
-#include "cmdline.h"
 #include "console.h"
 #include "error.h"
 #include "global.h"
@@ -12,14 +11,10 @@ using std::set_terminate;
 using std::to_string;
 using std::transform;
 
-extern CommandLineArguments _cmd_args;
-
 class SystemRuntime
 {
 public:
-	static CommandLineArguments args();
 	static void catch_termination();
-	static void init(int argc, char *argv[]);
 	static bool is_admin_or_root();
 };
 

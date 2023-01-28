@@ -26,6 +26,7 @@
 
 #include "archive.h"
 #include "archive_entry.h"
+#include "cxxopts.hpp"
 #include "nlohmann/json.hpp"
 
 namespace chrono = std::chrono;
