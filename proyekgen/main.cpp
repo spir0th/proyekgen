@@ -14,10 +14,10 @@ int main(int argc, char *argv[])
 	// Declare and init command-line argument option variables (e.g help, version, verbose)
 	cxxopts::Options args("proyekgen", "A simple and easy project generator.");
 
-	args.add_options("main")
+	args.add_options("Main")
 		("t,template", "Specify template name (or path)", cxxopts::value<string>()->default_value(string()))
 		("o,output", "Specify output directory", cxxopts::value<string>()->default_value(SystemPaths::current_path()));
-	args.add_options("misc")
+	args.add_options("Other")
 		("h,help", "View help information")
 		("v,version", "Print program version")
 		("verbose", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
