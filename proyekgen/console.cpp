@@ -149,9 +149,8 @@ void Console::log(double num)
 string Console::ask(const string& msg)
 {
 	string out;
-	cout << msg;
+	log(msg);
 	getline(cin, out);
-	cout << end();
 	return out;
 }
 
