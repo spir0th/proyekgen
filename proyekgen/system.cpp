@@ -11,9 +11,14 @@ void SystemRuntime::catch_termination()
 		exception_ptr ptr = current_exception();
 		
 		try {
-			rethrow_exception(ptr);
+			if (ptr) {
+				rethrow_exception(ptr);
+			}
 		} catch (exception ex) {
-			print_error << ex.what() << newline;
+			print_error << "An error occurred during run-time: " << ex.what() << newline;
+			print << ""; // Reset current console text color
+		} catch (...) {
+			print_error << "An unknown error occurred during run-time. Aborting..." << newline;
 			print << ""; // Reset current console text color
 		}
 
