@@ -18,6 +18,17 @@ public:
 	static bool is_admin_or_root();
 };
 
+class SystemBasePaths
+{
+public:
+	static string local_config_path();
+	static string system_config_path();
+	static string local_data_path();
+	static string system_data_path();
+	static string local_templates_path();
+	static string global_templates_path();
+};
+
 class SystemPaths
 {
 public:
@@ -26,10 +37,4 @@ public:
 	static string config_path();
 	static string data_path();
 	static vector<string> template_paths();
-	static string local_config_path();
-	static string system_config_path();
-	static string local_data_path();
-	static string system_data_path();
-	static string local_templates_path();
-	static string system_templates_path();
 };
