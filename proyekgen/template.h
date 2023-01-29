@@ -1,5 +1,4 @@
 #pragma once
-#include "config.h"
 #include "console.h"
 #include "global.h"
 #include "system.h"
@@ -70,6 +69,7 @@ A class that manages templates easily.
 class TemplateLibrary
 {
 public:
+	TemplateLibrary(const vector<string> &paths);
 	TemplateLibrary();
 
 	vector<string> list();
@@ -80,6 +80,5 @@ public:
 private:
 	string get_path(const string &name);
 
-	json config = json::object();
 	vector<string> search_paths = SystemPaths::template_paths();
 };

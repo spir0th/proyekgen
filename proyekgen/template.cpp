@@ -138,13 +138,24 @@ TemplateProject Template::project()
 	return _project;
 }
 
-TemplateLibrary::TemplateLibrary()
-	: config(Config::templates())
+TemplateLibrary::TemplateLibrary(const vector<string> &paths)
 {
-	// Concatenate extra search paths put from templates.json
-	vector<string> extra_paths = config.value("paths", vector<string>());
-	search_paths.insert(search_paths.end(), make_move_iterator(extra_paths.begin()),
-		make_move_iterator(extra_paths.end()));
+	// Add default search paths from SystemPaths
+	const vector<string> &default_paths = SystemPaths::template_paths();
+	search_paths.insert(default_paths.begin(), make_move_iterator(default_paths.begin()),
+		make_move_iterator(default_paths.end()));
+
+	// Also add search paths passed from the constructor arguments
+	search_paths.insert(paths.end(), make_move_iterator(paths.begin()),
+		make_move_iterator(paths.end()));
+}
+
+TemplateLibrary::TemplateLibrary()
+{
+	// Only add default search paths from SystemPaths
+	const vector<string> &default_paths = SystemPaths::template_paths();
+	search_paths.insert(default_paths.begin(), make_move_iterator(default_paths.begin()),
+		make_move_iterator(default_paths.end()));
 }
 
 vector<string> TemplateLibrary::list()
