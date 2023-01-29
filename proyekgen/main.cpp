@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 			continue;
 		}
 		try {
-			config.readFile(config_file);
+			config.readFile(config_file.c_str());
 		} catch (libconfig::ParseException ex) {
 			LOG4CXX_WARN(logger, "Cannot read configuration file: " << ex.getFile()
 				<< ", at line " << ex.getLine());
@@ -108,6 +108,6 @@ int main(int argc, char *argv[])
 	// Print elapsed time at the end of process
 	steady_clock::time_point end = steady_clock::now();
 	long long elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-	LOG4CXX_INFO(logger, "Finished at " + std::to_string(elapsed) + "milisecs.");
+	LOG4CXX_INFO(logger, "Finished at " + std::to_string(elapsed) + "ms.");
 	return 0;
 }
