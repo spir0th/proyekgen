@@ -8,5 +8,7 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
 
 add_executable(${PROYEKGEN_TARGET_NAME} ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})
-target_include_directories(${PROYEKGEN_TARGET_NAME} PRIVATE ${ZSTR_INCLUDE_DIRS})
-target_link_libraries(${PROYEKGEN_TARGET_NAME} PRIVATE cxxopts::cxxopts nlohmann_json::nlohmann_json LibArchive::LibArchive)
+target_link_libraries(${PROYEKGEN_TARGET_NAME} PRIVATE
+	cxxopts::cxxopts nlohmann_json::nlohmann_json
+	LibArchive::LibArchive
+)
