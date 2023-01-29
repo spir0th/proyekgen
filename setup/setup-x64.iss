@@ -46,11 +46,11 @@ Name: "templates\python"; Description: "Python"; Types: full
 
 [Files]
 Source: "{#AppName}\*"; DestDir: "{app}"; Excludes: "*.ilk, *.pdb, *.manifest, *.cmake, CMakeFiles, templates"; Components: "core"
-Source: "{#AppName}\templates\cmake-c\*"; DestDir: "{autoappdata}\{#AppName}\templates\cmake-c"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist onlyifdoesntexist; Components: "templates/ccpp"
-Source: "{#AppName}\templates\cmake-cpp\*"; DestDir: "{autoappdata}\{#AppName}\templates\cmake-cpp"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist onlyifdoesntexist; Components: "templates/ccpp"
-Source: "{#AppName}\templates\gradle\*"; DestDir: "{autoappdata}\{#AppName}\templates\gradle"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist onlyifdoesntexist; Components: "templates/java"
-Source: "{#AppName}\templates\maven\*"; DestDir: "{autoappdata}\{#AppName}\templates\maven"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist onlyifdoesntexist; Components: "templates/java"
-Source: "{#AppName}\templates\python\*"; DestDir: "{autoappdata}\{#AppName}\templates\python"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist onlyifdoesntexist; Components: "templates/python"
+Source: "{#AppName}\templates\cmake-c\*"; DestDir: "{autoappdata}\{#AppName}\templates\cmake-c"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist; Components: "templates/ccpp"
+Source: "{#AppName}\templates\cmake-cpp\*"; DestDir: "{autoappdata}\{#AppName}\templates\cmake-cpp"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist; Components: "templates/ccpp"
+Source: "{#AppName}\templates\gradle\*"; DestDir: "{autoappdata}\{#AppName}\templates\gradle"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist; Components: "templates/java"
+Source: "{#AppName}\templates\maven\*"; DestDir: "{autoappdata}\{#AppName}\templates\maven"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist; Components: "templates/java"
+Source: "{#AppName}\templates\python\*"; DestDir: "{autoappdata}\{#AppName}\templates\python"; Flags: recursesubdirs uninsneveruninstall skipifsourcedoesntexist; Components: "templates/python"
 
 [Run]
 Filename: "{#AppMainExec}"; Description: "Run {#AppName}"; Flags: postinstall nowait skipifsilent unchecked
