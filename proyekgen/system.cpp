@@ -1,26 +1,5 @@
 #include "system.h"
 
-void SystemRuntime::catch_termination()
-{
-	set_terminate([]() {
-		exception_ptr ptr = current_exception();
-		
-		try {
-			if (ptr) {
-				rethrow_exception(ptr);
-			}
-		} catch (exception ex) {
-			print_error << "An error occurred during run-time: " << ex.what() << newline;
-			print << ""; // Reset current console text color
-		} catch (...) {
-			print_error << "An unknown error occurred during run-time. Aborting..." << newline;
-			print << ""; // Reset current console text color
-		}
-
-		std::abort(); // Accessing this function from std namespace
-	});
-}
-
 bool SystemRuntime::is_admin_or_root()
 {
 #if defined(_WIN32)
@@ -48,6 +27,14 @@ bool SystemRuntime::is_admin_or_root()
 	return false;
 }
 
+void SystemRuntime::fatal(log4cxx::LoggerPtr logger, const string &msg, int code)
+{
+	LOG4CXX_FATAL(logger, msg);
+	exit(code);
+}
+
+log4cxx::LoggerPtr SystemBasePaths::_logger(get_logger("SystemBasePaths"));
+
 string SystemBasePaths::global_config_path()
 {
 #if defined(_WIN32)
@@ -60,7 +47,6 @@ string SystemBasePaths::global_config_path()
 	return string();
 }
 
-
 string SystemBasePaths::global_data_path()
 {
 #if defined(_WIN32)
@@ -69,8 +55,7 @@ string SystemBasePaths::global_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		// Failure of finding the ProgramData location
-		throw Win32InternalError("Failed to find the location of ProgramData.");
+		SystemRuntime::fatal(_logger, "Cannot find ProgramData.", code);
 	}
 
 	wstringstream stream;
@@ -112,7 +97,7 @@ string SystemBasePaths::local_config_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		throw UnixNoPathPreservedError("Unable to locate local config files.");
+		SystemRuntime::fatal(_logger, "Cannot reserve local configuration files.");
 	}
 
 	stream << "/.proyekgen/config";
@@ -130,8 +115,7 @@ string SystemBasePaths::local_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		// Failure of finding the LocalAppData location
-		throw Win32InternalError("Failed to find the location of LocalAppData.");
+		SystemRuntime::fatal(_logger, "Cannot find AppData.", code);
 	}
 
 	wstringstream stream;
@@ -156,7 +140,7 @@ string SystemBasePaths::local_data_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		throw UnixNoPathPreservedError("Unable to locate local data files.");
+		SystemRuntime::fatal(_logger, "Cannot reserve local data files.");
 	}
 
 	stream << "/.proyekgen";

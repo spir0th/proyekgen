@@ -1,25 +1,23 @@
 #pragma once
-#include "console.h"
-#include "error.h"
 #include "global.h"
+#include "logger.h"
 
 using std::back_inserter;
 using std::count_if;
-using std::current_exception;
-using std::rethrow_exception;
-using std::set_terminate;
 using std::to_string;
 using std::transform;
 
 class SystemRuntime
 {
 public:
-	static void catch_termination();
 	static bool is_admin_or_root();
+	static void fatal(log4cxx::LoggerPtr logger, const string &msg, int code = EXIT_FAILURE);
 };
 
 class SystemBasePaths
 {
+	static log4cxx::LoggerPtr _logger;
+
 public:
 	static string global_config_path();
 	static string global_data_path();

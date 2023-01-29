@@ -24,8 +24,11 @@
 
 #include "archive.h"
 #include "archive_entry.h"
-#include "libconfig.h++"
 #include "cxxopts.hpp"
+#include "libconfig.h++"
+#include "log4cxx/logger.h"
+#include "log4cxx/logmanager.h"
+#include "log4cxx/propertyconfigurator.h"
 #include "nlohmann/json.hpp"
 
 #define separator (char)std::filesystem::path::preferred_separator

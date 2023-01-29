@@ -1,6 +1,6 @@
 #pragma once
-#include "console.h"
 #include "global.h"
+#include "logger.h"
 #include "system.h"
 
 namespace filesystem = std::filesystem;
@@ -36,6 +36,8 @@ A class that carries the template's project data.
 */
 class TemplateProject
 {
+	static log4cxx::LoggerPtr _logger;
+
 public:
 	TemplateProject(string path);
 
@@ -68,6 +70,8 @@ A class that manages templates easily.
 */
 class TemplateLibrary
 {
+	static log4cxx::LoggerPtr _logger;
+
 public:
 	TemplateLibrary(const vector<string> &paths);
 	TemplateLibrary();

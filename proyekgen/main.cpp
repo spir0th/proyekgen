@@ -1,17 +1,12 @@
-#include "console.h"
-#include "error.h"
+#include "logger.h"
 #include "system.h"
 #include "template.h"
 
-// console.h
-bool _verbose;
-
 int main(int argc, char *argv[])
 {
-	// Setup terminate handler
-	SystemRuntime::catch_termination();
+	// Init log4cxx and application configuration
+	log4cxx::LoggerPtr logger = get_logger("main");
 
-	// Init application configuration
 	for (const string &config_path : SystemPaths::config_paths()) {
 		const string &config_file = config_path + separator + "init.cfg";
 		libconfig::Config config;
@@ -22,8 +17,8 @@ int main(int argc, char *argv[])
 		try {
 			config.readFile(config_file);
 		} catch (libconfig::ParseException ex) {
-			print_warning << "Cannot read configuration file: " << ex.getFile()
-				<< ", at line " << ex.getLine() << newline;
+			LOG4CXX_WARN(logger, "Cannot read configuration file: " << ex.getFile()
+				<< ", at line " << ex.getLine());
 			continue;
 		}
 	}
@@ -51,32 +46,30 @@ int main(int argc, char *argv[])
 	args.parse_positional({"template"});
 	cxxopts::ParseResult result = args.parse(argc, argv);
 
-	_verbose = result["verbose"].as<bool>();
-
 	// Print out command-line arguments in verbose
 	if (result.arguments().size() > 0) {
-		print_verbose << "Command-line arguments:" << newline;
+		LOG4CXX_DEBUG(logger, "Command-line arguments:");
 
 		for (const cxxopts::KeyValue &arg : result.arguments()) {
-			print_verbose << "	" << arg.key() << ": " << arg.value() << newline;
+			LOG4CXX_DEBUG(logger, "	" << arg.key() << ": " << arg.value());
 		}
 	}
 	if (result.unmatched().size() > 0) {
-		print_verbose << "Ignored command-line arguments:" << newline;
+		LOG4CXX_DEBUG(logger, "Ignored command-line arguments:");
 
 		for (const string &arg : result.unmatched()) {
-			print_verbose << "	" << arg << newline;
+			LOG4CXX_DEBUG(logger, "	" << arg);
 		}
 	}
 
 	// Do specific code when some argument options were passed
 	if (result.count("help")) {
 		cxxopts::Options help = args.custom_help("<TEMPLATE> [OPTIONS...]");
-		print << help.positional_help(string()).help() << newline;
+		LOG4CXX_INFO(logger, help.positional_help(string()).help());
 		return EXIT_SUCCESS;
 	}
 	if (result.count("version")) {
-		print << "1.0.0" << newline;
+		LOG4CXX_INFO(logger, "1.0.0");
 		return EXIT_SUCCESS;
 	}
 
@@ -86,26 +79,27 @@ int main(int argc, char *argv[])
 	string output_path = result["output"].as<string>();
 
 	while (template_name.empty()) {
-		template_name = input("Specify template name (or path): ");
+		// TODO: Implement shell class to ask input
+		// template_name = input("Specify template name (or path): ");
+		SystemRuntime::fatal(logger, "Implement shell class to ask template name");
 	}
 
 	// Parse existing template and generate it's project data into the output path
 	Template _template = library.get(template_name); // Screw you "template" keyword
 	steady_clock::time_point start = steady_clock::now();
-	print_verbose << "Template:" << newline;
-	print_verbose << "	name: " << _template.info().name() << newline;
-	print_verbose << "	author: " << _template.info().author() << newline;
-	print_verbose << "	full path: " << _template.info().path() << newline;
-	print_verbose << "Output:" << newline;
-	print_verbose << "	" << output_path << newline;
-	print_verbose << newline;
+	LOG4CXX_DEBUG(logger, "Template:");
+	LOG4CXX_DEBUG(logger, "	name: " + _template.info().name());
+	LOG4CXX_DEBUG(logger, "	author: " + _template.info().author());
+	LOG4CXX_DEBUG(logger, "	full path: " + _template.info().path());
+	LOG4CXX_DEBUG(logger, "Output:");
+	LOG4CXX_DEBUG(logger, "	" + output_path);
 
 	if (!filesystem::is_directory(output_path)) {
 		if (!result["mkdir"].as<bool>()) {
-			throw exception("Output directory does not exist.");
+			SystemRuntime::fatal(logger, "Output directory doesn't exist, append \"--mkdir\" to automatically create one.");
 		}
 
-		print_verbose << "Output directory does not exist, making a new one..." << newline;
+		LOG4CXX_INFO(logger, "Output directory doesn't exist, making a new one.");
 		filesystem::create_directories(output_path);
 	}
 
@@ -114,6 +108,6 @@ int main(int argc, char *argv[])
 	// Print elapsed time at the end of process
 	steady_clock::time_point end = steady_clock::now();
 	long long elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-	print << "Finished at " << elapsed << "ms." << newline;
+	LOG4CXX_INFO(logger, "Finished at " + std::to_string(elapsed) + "milisecs.");
 	return 0;
 }
