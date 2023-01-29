@@ -27,9 +27,8 @@ bool SystemRuntime::is_admin_or_root()
 	return false;
 }
 
-void SystemRuntime::fatal(log4cxx::LoggerPtr logger, const string &msg, int code)
+void SystemRuntime::fatal(int code)
 {
-	LOG4CXX_FATAL(logger, msg);
 	exit(code);
 }
 
@@ -55,7 +54,8 @@ string SystemBasePaths::global_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		SystemRuntime::fatal(_logger, "Cannot find ProgramData.", code);
+		LOG4CXX_FATAL(_logger, "Cannot find ProgramData. (code " << code << ")");
+		SystemRuntime::fatal(code);
 	}
 
 	wstringstream stream;
@@ -97,7 +97,8 @@ string SystemBasePaths::local_config_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		SystemRuntime::fatal(_logger, "Cannot reserve local configuration files.");
+		LOG4CXX_FATAL(_logger, "Cannot reserve local configuration files.");
+		SystemRuntime::fatal();
 	}
 
 	stream << "/.proyekgen/config";
@@ -115,7 +116,8 @@ string SystemBasePaths::local_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		SystemRuntime::fatal(_logger, "Cannot find AppData.", code);
+		LOG4CXX_FATAL(_logger, "Cannot find AppData. (code " << code << ")");
+		SystemRuntime::fatal(code);
 	}
 
 	wstringstream stream;
@@ -140,7 +142,8 @@ string SystemBasePaths::local_data_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		SystemRuntime::fatal(_logger, "Cannot reserve local data files.");
+		LOG4CXX_FATAL(_logger, "Cannot reserve local data files.");
+		SystemRuntime::fatal();
 	}
 
 	stream << "/.proyekgen";

@@ -25,7 +25,8 @@ TemplateProject::TemplateProject(string path)
 	: _path(path)
 {
 	if (!filesystem::is_regular_file(_path)) {
-		SystemRuntime::fatal(_logger, _path + " does not exist/or is not an archive.");
+		LOG4CXX_FATAL(_logger, _path << " does not exist/or is not an archive.");
+		SystemRuntime::fatal();
 	}
 }
 
@@ -54,7 +55,8 @@ bool TemplateProject::extract(const string &dest)
 	result = archive_read_open_filename(reader, _path.c_str(), 10240);
 
 	if (result != ARCHIVE_OK) {
-		SystemRuntime::fatal(_logger, "Failed to read archive file: " + _path);
+		LOG4CXX_FATAL(_logger, "Failed to read archive file: " << _path);
+		SystemRuntime::fatal(result);
 	}
 	for (;;) {
 		result = archive_read_next_header(reader, &entry);
@@ -63,22 +65,25 @@ bool TemplateProject::extract(const string &dest)
 			break;
 		}
 		if (result < ARCHIVE_OK) {
-			SystemRuntime::fatal(_logger, archive_error_string(reader));
+			LOG4CXX_FATAL(_logger, archive_error_string(reader));
+			SystemRuntime::fatal(result);
 		}
 		if (result < ARCHIVE_WARN) {
 			return false;
 		}
 
 		result = archive_write_header(writer, entry);
-		LOG4CXX_DEBUG(_logger, string("Extracting: ") + archive_entry_pathname(entry));
+		LOG4CXX_DEBUG(_logger, "Extracting: " << archive_entry_pathname(entry));
 
 		if (result < ARCHIVE_OK) {
-			SystemRuntime::fatal(_logger, archive_error_string(writer));
+			LOG4CXX_FATAL(_logger, archive_error_string(writer));
+			SystemRuntime::fatal(result);
 		} else if (archive_entry_size(entry) > 0) {
 			result = copy(reader, writer);
 
 			if (result < ARCHIVE_OK) {
-				SystemRuntime::fatal(_logger, archive_error_string(writer));
+				LOG4CXX_FATAL(_logger, archive_error_string(writer));
+				SystemRuntime::fatal(result);
 			}
 			if (result < ARCHIVE_WARN) {
 				return false;
@@ -88,7 +93,8 @@ bool TemplateProject::extract(const string &dest)
 		result = archive_write_finish_entry(writer);
 
 		if (result < ARCHIVE_OK) {
-			SystemRuntime::fatal(_logger, archive_error_string(writer));
+			LOG4CXX_FATAL(_logger, archive_error_string(writer));
+			SystemRuntime::fatal(result);
 		}
 		if (result < ARCHIVE_WARN) {
 			return false;
@@ -188,7 +194,8 @@ vector<string> TemplateLibrary::list()
 Template TemplateLibrary::get(const string &name)
 {
 	if (!exists(name)) {
-		SystemRuntime::fatal(_logger, "Cannot find template with the matching name: " + name);
+		LOG4CXX_FATAL(_logger, "Cannot find template with the matching name: " << name);
+		SystemRuntime::fatal();
 	}
 
 	string full_path = get_path(name);
@@ -215,7 +222,8 @@ Template TemplateLibrary::get(const string &name)
 bool TemplateLibrary::remove(string name)
 {
 	if (!exists(name)) {
-		SystemRuntime::fatal(_logger, "Cannot find template with the matching name: " + name);
+		LOG4CXX_FATAL(_logger, "Cannot find template with the matching name: " << name);
+		SystemRuntime::fatal();
 	}
 	if (file_path(name).is_relative()) {
 		for (string t : list()) {

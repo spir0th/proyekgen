@@ -81,7 +81,8 @@ int main(int argc, char *argv[])
 	while (template_name.empty()) {
 		// TODO: Implement shell class to ask input
 		// template_name = input("Specify template name (or path): ");
-		SystemRuntime::fatal(logger, "Implement shell class to ask template name");
+		LOG4CXX_FATAL(logger, "Implement shell class to ask template name");
+		SystemRuntime::fatal();
 	}
 
 	// Parse existing template and generate it's project data into the output path
@@ -96,7 +97,9 @@ int main(int argc, char *argv[])
 
 	if (!filesystem::is_directory(output_path)) {
 		if (!result["mkdir"].as<bool>()) {
-			SystemRuntime::fatal(logger, "Output directory doesn't exist, append \"--mkdir\" to automatically create one.");
+			LOG4CXX_FATAL(logger, "Output directory doesn't exist"
+				<< ", append \"--mkdir\" to automatically create one.");
+			SystemRuntime::fatal();
 		}
 
 		LOG4CXX_INFO(logger, "Output directory doesn't exist, making a new one.");

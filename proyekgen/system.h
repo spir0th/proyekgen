@@ -11,7 +11,7 @@ class SystemRuntime
 {
 public:
 	static bool is_admin_or_root();
-	static void fatal(log4cxx::LoggerPtr logger, const string &msg, int code = EXIT_FAILURE);
+	static void fatal(int code = EXIT_FAILURE);
 };
 
 class SystemBasePaths
