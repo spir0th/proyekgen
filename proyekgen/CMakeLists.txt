@@ -8,22 +8,16 @@ find_package(nlohmann_json CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
 
 if(WIN32)
-find_path(LIBCONFIG_INCLUDE_DIRS libconfig.h)
-find_library(LIBCONFIG_LIBRARIES libconfig)
-find_path(LIBCONFIG++_INCLUDE_DIRS libconfig.h)
+find_path(LIBCONFIG++_INCLUDE_DIRS libconfig.h++)
 find_library(LIBCONFIG++_LIBRARIES libconfig++)
 elseif(UNIX)
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBCONFIG REQUIRED libconfig)
 pkg_check_modules(LIBCONFIG++ REQUIRED libconfig++)
 endif()
 
 add_executable(${PROYEKGEN_TARGET_NAME} ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})
-target_include_directories(${PROYEKGEN_TARGET_NAME} PRIVATE
-	${LIBCONFIG_INCLUDE_DIRS} ${LIBCONFIG++_INCLUDE_DIRS}
-)
+target_include_directories(${PROYEKGEN_TARGET_NAME} PRIVATE ${LIBCONFIG++_INCLUDE_DIRS})
 target_link_libraries(${PROYEKGEN_TARGET_NAME} PRIVATE
 	cxxopts::cxxopts nlohmann_json::nlohmann_json
-	LibArchive::LibArchive ${LIBCONFIG_LIBRARIES}
-	${LIBCONFIG++_LIBRARIES}
+	LibArchive::LibArchive ${LIBCONFIG++_LIBRARIES}
 )
