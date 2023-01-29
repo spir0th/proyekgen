@@ -17,11 +17,9 @@
 #include <ShlObj.h>
 #include <direct.h>
 #define chdir _chdir
-#define path_separator "\\"
 #elif defined(__unix__) or defined(__MACH__)
 #include "limits.h"
 #include "unistd.h"
-#define path_separator "/"
 #endif
 
 #include "archive.h"
@@ -29,13 +27,15 @@
 #include "cxxopts.hpp"
 #include "nlohmann/json.hpp"
 
+#define separator (char)std::filesystem::path::preferred_separator
+
 namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
 using dir_entry = std::filesystem::directory_entry;
 using exception = std::exception;
 using exception_ptr = std::exception_ptr;
-using filepath = std::filesystem::path;
+using file_path = std::filesystem::path;
 using file_input = std::ifstream;
 using file_output = std::ofstream;
 using json = nlohmann::json;

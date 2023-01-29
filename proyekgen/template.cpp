@@ -167,8 +167,8 @@ vector<string> TemplateLibrary::list()
 			continue;
 		}
 		for (const dir_entry &entry : filesystem::directory_iterator{path}) {
-			string project = entry.path().string() + path_separator + "project.tar.xz";
-			string info = entry.path().string() + path_separator + "info.json";
+			string project = entry.path().string() + separator + "project.tar.xz";
+			string info = entry.path().string() + separator + "info.json";
 
 			if (!filesystem::is_regular_file(project) || !filesystem::is_regular_file(info)) {
 					continue;
@@ -188,8 +188,8 @@ Template TemplateLibrary::get(const string &name)
 	}
 
 	string full_path = get_path(name);
-	string project_path = full_path + path_separator + "project.tar.xz";
-	string info_path = full_path + path_separator + "info.json";
+	string project_path = full_path + separator + "project.tar.xz";
+	string info_path = full_path + separator + "info.json";
 
 	// info.json
 	json info_json = json::object();
@@ -213,10 +213,10 @@ bool TemplateLibrary::remove(string name)
 	if (!exists(name)) {
 		throw TemplateNotFoundError("Cannot find template with the matching name: " + name);
 	}
-	if (filepath(name).is_relative()) {
+	if (file_path(name).is_relative()) {
 		for (string t : list()) {
-			string project = t + path_separator + "project.tar.xz";
-			string info = t + path_separator + "info.json";
+			string project = t + separator + "project.tar.xz";
+			string info = t + separator + "info.json";
 
 			if (!filesystem::is_directory(t)) {
 				continue;
@@ -227,19 +227,19 @@ bool TemplateLibrary::remove(string name)
 				continue;
 			}
 
-			name = t + path_separator + name;
+			name = t + separator + name;
 		}
 	}
 
-	std::uintmax_t result = filesystem::remove_all(filepath(name));
+	std::uintmax_t result = filesystem::remove_all(file_path(name));
 	return (result > 0) ? true : false;
 }
 
 bool TemplateLibrary::exists(const string &name)
 {
 	string path = get_path(name);
-	string project = path + path_separator + "project.tar.xz";
-	string info = path + path_separator + "info.json";
+	string project = path + separator + "project.tar.xz";
+	string info = path + separator + "info.json";
 
 	if (filesystem::is_directory(path) &&
 		filesystem::is_regular_file(project) &&
@@ -254,17 +254,17 @@ string TemplateLibrary::get_path(const string &name)
 {
 	string path = name;
 
-	if (filepath(path).is_relative()) {
+	if (file_path(path).is_relative()) {
 		for (string t : list()) {
-			string project = t + path_separator + "project.tar.xz";
-			string info = t + path_separator + "info.json";
+			string project = t + separator + "project.tar.xz";
+			string info = t + separator + "info.json";
 
 			if (!filesystem::is_directory(t) ||
 				!filesystem::is_regular_file(project) ||
 				!filesystem::is_regular_file(info)) {
 				continue;
 			}
-			if (filepath(t).filename().string() != path) {
+			if (file_path(t).filename().string() != path) {
 				continue;
 			}
 
