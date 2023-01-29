@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 		("mkdir", "Make output directory (can be recursive) if non-existent",
 			cxxopts::value<bool>()->default_value("false"));
 	args.add_options("Logging")
-		("verbose", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
+		("debug", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
 	args.add_options("Misc")
 		("h,help", "View help information")
 		("v,version", "Print program version");
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 	args.parse_positional({"template"});
 	cxxopts::ParseResult result = args.parse(argc, argv);
 
-	// Print out command-line arguments in verbose
+	// Print out command-line arguments if debug
 	if (result.arguments().size() > 0) {
 		LOG4CXX_DEBUG(logger, "Command-line arguments:");
 
