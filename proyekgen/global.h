@@ -24,6 +24,7 @@
 
 #include "archive.h"
 #include "archive_entry.h"
+#include "libconfig.h++"
 #include "cxxopts.hpp"
 #include "nlohmann/json.hpp"
 

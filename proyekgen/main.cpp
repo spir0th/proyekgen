@@ -11,16 +11,41 @@ int main(int argc, char *argv[])
 	// Setup terminate handler
 	SystemRuntime::catch_termination();
 
-	// Declare and init command-line argument option variables (e.g help, version, verbose)
-	cxxopts::Options args("proyekgen", "A simple and easy project generator.");
+	// Init application configuration
+	for (const string &config_path : SystemPaths::config_paths()) {
+		const string &config_file = config_path + separator + "init.cfg";
+		libconfig::Config config;
 
-	args.add_options("Main")
-		("t,template", "Specify template name (or path)", cxxopts::value<string>()->default_value(string()))
-		("o,output", "Specify output directory", cxxopts::value<string>()->default_value(SystemPaths::current_path()));
-	args.add_options("Other")
-		("h,help", "View help information")
-		("v,version", "Print program version")
+		if (!filesystem::is_regular_file(config_file)) {
+			continue;
+		}
+		try {
+			config.readFile(config_file);
+		} catch (libconfig::ParseException ex) {
+			print_warning << "Cannot read configuration file: " << ex.getFile()
+				<< ", at line " << ex.getLine() << newline;
+			continue;
+		}
+	}
+
+	// Parse command-line arguments and set some variables if options are passed
+	cxxopts::Options args("proyekgen", string());
+
+	args.add_options("Template")
+		("t,template", "Specify template name (or path)",
+			cxxopts::value<string>()->default_value(string()))
+		("search-paths", "Append additional search paths",
+			cxxopts::value<vector<string>>()->default_value({}));
+	args.add_options("Output")
+		("o,output", "Specify output directory",
+			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
+		("mkdir", "Make output directory (can be recursive) if non-existent",
+			cxxopts::value<bool>()->default_value("false"));
+	args.add_options("Logging")
 		("verbose", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
+	args.add_options("Misc")
+		("h,help", "View help information")
+		("v,version", "Print program version");
 
 	args.allow_unrecognised_options();
 	args.parse_positional({"template"});
@@ -56,7 +81,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Generate a project using the given template from the command-line arguments
-	TemplateLibrary library;
+	TemplateLibrary library = TemplateLibrary(result["search-paths"].as<vector<string>>());
 	string template_name = (result.count("template")) ? result["template"].as<string>() : string();
 	string output_path = result["output"].as<string>();
 
@@ -76,7 +101,11 @@ int main(int argc, char *argv[])
 	print_verbose << newline;
 
 	if (!filesystem::is_directory(output_path)) {
-		print_verbose << "Output path does not exist, making a new one..." << newline;
+		if (!result["mkdir"].as<bool>()) {
+			throw exception("Output directory does not exist.");
+		}
+
+		print_verbose << "Output directory does not exist, making a new one..." << newline;
 		filesystem::create_directories(output_path);
 	}
 
