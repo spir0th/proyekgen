@@ -3,7 +3,7 @@
 
 set WORKDIR=%~dp0
 set SRCDIR=%WORKDIR:~0,-1%\..\
-set DEPLOYDIR=%SRCDIR%\build\x64-Release\proyekgen
+set DEPLOYDIR=%SRCDIR%\build\windows-x64-release\proyekgen
 
 set COMPILER=iscc.exe
 
@@ -20,6 +20,10 @@ dir /b /s /a %DEPLOYDIR% | findstr . > nul || (
 :: Finding out CPU architecture
 reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set ARCH=x86 || set ARCH=x64
 
+
+if "%~1" != "" (
+	ARCH=%1
+)
 if %ARCH% == x64 (
 	%COMPILER% %SETUP64%
 ) else (
