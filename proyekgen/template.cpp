@@ -79,8 +79,8 @@ bool TemplateProject::extract(const string &dest)
 			break;
 		}
 		if (result < ARCHIVE_OK) {
-			LOG4CXX_FATAL(_logger, archive_error_string(reader));
-			SystemRuntime::fatal(result);
+			LOG4CXX_ERROR(_logger, archive_error_string(reader));
+			return false;
 		}
 		if (result < ARCHIVE_WARN) {
 			return false;
@@ -90,14 +90,14 @@ bool TemplateProject::extract(const string &dest)
 		LOG4CXX_DEBUG(_logger, "Extracting: " << archive_entry_pathname(entry));
 
 		if (result < ARCHIVE_OK) {
-			LOG4CXX_FATAL(_logger, archive_error_string(writer));
-			SystemRuntime::fatal(result);
+			LOG4CXX_ERROR(_logger, archive_error_string(writer));
+			return false;
 		} else if (archive_entry_size(entry) > 0) {
 			result = copy(reader, writer);
 
 			if (result < ARCHIVE_OK) {
-				LOG4CXX_FATAL(_logger, archive_error_string(writer));
-				SystemRuntime::fatal(result);
+				LOG4CXX_ERROR(_logger, archive_error_string(writer));
+				return false;
 			}
 			if (result < ARCHIVE_WARN) {
 				return false;
@@ -107,8 +107,8 @@ bool TemplateProject::extract(const string &dest)
 		result = archive_write_finish_entry(writer);
 
 		if (result < ARCHIVE_OK) {
-			LOG4CXX_FATAL(_logger, archive_error_string(writer));
-			SystemRuntime::fatal(result);
+			LOG4CXX_ERROR(_logger, archive_error_string(writer));
+			return false;
 		}
 		if (result < ARCHIVE_WARN) {
 			return false;
