@@ -35,8 +35,8 @@
 namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
-using Config = libconfig::Config;
-using ConfigParseException = libconfig::ParseException;
+using config = libconfig::Config;
+using config_parse_exception = libconfig::ParseException;
 using dir_entry = std::filesystem::directory_entry;
 using exception = std::exception;
 using exception_ptr = std::exception_ptr;
@@ -44,10 +44,9 @@ using file_path = std::filesystem::path;
 using file_input = std::ifstream;
 using file_output = std::ofstream;
 using json = nlohmann::json;
+using cmd_options = cxxopts::Options;
 template<class Key, class T>
 using map = std::map<Key, std::less<Key>, std::allocator<std::pair<const Key, T>>>;
-using Options = cxxopts::Options;
-using OptionsResult = cxxopts::ParseResult;
 template<class Key, class T>
 using pair = std::pair<Key, T>;
 using steady_clock = std::chrono::steady_clock;

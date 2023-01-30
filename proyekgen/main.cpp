@@ -3,23 +3,22 @@
 
 int main(int argc, char *argv[])
 {
-	// Init logging using the glog library
+	// Init Google Logging library to log messages
 	FLAGS_logtostdout = 1;
 	FLAGS_colorlogtostdout = 1;
 	google::InitGoogleLogging(argv[0]);
-	google::InstallFailureSignalHandler();
 
-	// Init application configuration
+	// Read application configuration from a list of paths
 	for (const string &config_path : SystemPaths::config_paths()) {
-		const string &config_file = config_path + separator + "init.cfg";
-		Config config;
+		const string &config_filepath = config_path + separator + "init.cfg";
+		config config_file;
 
-		if (!filesystem::is_regular_file(config_file)) {
+		if (!filesystem::is_regular_file(config_filepath)) {
 			continue;
 		}
 		try {
-			config.readFile(config_file.c_str());
-		} catch (ConfigParseException ex) {
+			config_file.readFile(config_filepath.c_str());
+		} catch (config_parse_exception ex) {
 			LOG(WARNING) << "Cannot read configuration file: " << ex.getFile()
 				<< ", at line " << ex.getLine();
 			continue;
@@ -27,7 +26,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Parse command-line arguments
-	Options options = Options("proyekgen", string());
+	cmd_options options = cmd_options("proyekgen", string());
 
 	options.add_options("Template")
 		("t,template", "Specify template name (or path)",
@@ -40,14 +39,14 @@ int main(int argc, char *argv[])
 		("mkdir", "Make output directory (can be recursive) if non-existent",
 			cxxopts::value<bool>()->default_value("false"));
 	options.add_options("Log")
-		("debug", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
+		("v,verbose", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
 	options.add_options("Misc")
 		("h,help", "View help information")
-		("v,version", "Print program version");
+		("version", "Print program version");
 
 	options.allow_unrecognised_options();
 	options.parse_positional({"template"});
-	OptionsResult options_result = options.parse(argc, argv);
+	auto options_result = options.parse(argc, argv);
 
 	// Print out command-line arguments if debug
 	if (options_result.arguments().size() > 0) {
@@ -67,7 +66,7 @@ int main(int argc, char *argv[])
 
 	// Do specific code when some argument options were passed
 	if (options_result.count("help")) {
-		Options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
+		cmd_options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
 		LOG(INFO) << help.positional_help(string()).help();
 		return EXIT_SUCCESS;
 	}
