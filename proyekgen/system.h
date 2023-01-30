@@ -7,6 +7,9 @@ using std::count_if;
 using std::to_string;
 using std::transform;
 
+/*
+An utility class that provides runtime functions
+*/
 class SystemRuntime
 {
 public:
@@ -14,6 +17,12 @@ public:
 	static void fatal(int code = EXIT_FAILURE);
 };
 
+/*
+Internally used by the SystemPaths class.
+
+Accessing functions from this class might not be recommended
+as they provide separate functions for non-root/root privileges.
+*/
 class SystemBasePaths
 {
 	static log4cxx::LoggerPtr _logger;
@@ -27,6 +36,9 @@ public:
 	static string local_templates_path();
 };
 
+/*
+An utility class that provides path-reserved functions
+*/
 class SystemPaths
 {
 public:

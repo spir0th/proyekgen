@@ -7,6 +7,9 @@ namespace filesystem = std::filesystem;
 
 using std::make_move_iterator;
 
+/*
+Unused enumeration class, may be used later in the future.
+*/
 enum class TemplatePlatform
 {
 	Any = 0, Windows = 1, Linux = 2, macOS = 3
@@ -66,7 +69,7 @@ private:
 };
 
 /*
-A class that manages templates easily.
+An utility class that manages templates easily.
 */
 class TemplateLibrary
 {

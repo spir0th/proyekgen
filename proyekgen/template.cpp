@@ -4,16 +4,25 @@ TemplateInfo::TemplateInfo(string name, string author, string path)
 	: _name(name), _author(author), _path(path), _platform(TemplatePlatform::Any)
 {}
 
+/*
+Return the template name
+*/
 string TemplateInfo::name()
 {
 	return _name;
 }
 
+/*
+Return the template author
+*/
 string TemplateInfo::author()
 {
 	return _author;
 }
 
+/*
+Return the fully-qualified path of the template
+*/
 string TemplateInfo::path()
 {
 	return _path;
@@ -30,6 +39,11 @@ TemplateProject::TemplateProject(string path)
 	}
 }
 
+/*
+Extract the template project to a specified destination
+
+This function returns the result of file extraction
+*/
 bool TemplateProject::extract(const string &dest)
 {
 	struct archive *reader;
@@ -107,6 +121,9 @@ bool TemplateProject::extract(const string &dest)
 	return true;
 }
 
+/*
+Internally used by the extract function
+*/
 int TemplateProject::copy(struct archive *r, struct archive *w)
 {
 	const void *buffer;
@@ -136,11 +153,17 @@ int TemplateProject::copy(struct archive *r, struct archive *w)
 Template::Template(TemplateInfo info, TemplateProject project)
 	: _info(info), _project(project) {}
 
+/*
+Return the template information
+*/
 TemplateInfo Template::info()
 {
 	return _info;
 }
 
+/*
+Return the template project
+*/
 TemplateProject Template::project()
 {
 	return _project;
@@ -168,6 +191,9 @@ TemplateLibrary::TemplateLibrary()
 		make_move_iterator(default_paths.end()));
 }
 
+/*
+Get the list of templates in the library
+*/
 vector<string> TemplateLibrary::list()
 {
 	vector<string> contents;
@@ -191,6 +217,12 @@ vector<string> TemplateLibrary::list()
 	return contents;
 }
 
+/*
+Get the template using the specified name
+
+This function may cause the program to lead
+in a fatal error if the template doesn't exist.
+*/
 Template TemplateLibrary::get(const string &name)
 {
 	if (!exists(name)) {
@@ -219,6 +251,14 @@ Template TemplateLibrary::get(const string &name)
 	return Template(info, project);
 }
 
+/*
+Remove template from the library
+
+Unused function, this might be used later in the future.
+
+This function may cause the program to lead
+in a fatal error if the template doesn't exist.
+*/
 bool TemplateLibrary::remove(string name)
 {
 	if (!exists(name)) {
@@ -247,6 +287,9 @@ bool TemplateLibrary::remove(string name)
 	return (result > 0) ? true : false;
 }
 
+/*
+Returns true if template exists in the library
+*/
 bool TemplateLibrary::exists(const string &name)
 {
 	string path = get_path(name);
@@ -262,6 +305,9 @@ bool TemplateLibrary::exists(const string &name)
 	return false;
 }
 
+/*
+Returns the fully-qualified path of a template
+*/
 string TemplateLibrary::get_path(const string &name)
 {
 	string path = name;
