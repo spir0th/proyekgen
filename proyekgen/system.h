@@ -1,6 +1,5 @@
 #pragma once
 #include "global.h"
-#include "logger.h"
 
 using std::back_inserter;
 using std::count_if;
@@ -25,8 +24,6 @@ as they provide separate functions for non-root/root privileges.
 */
 class SystemBasePaths
 {
-	static log4cxx::LoggerPtr _logger;
-
 public:
 	static string global_config_path();
 	static string global_data_path();

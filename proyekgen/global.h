@@ -17,6 +17,7 @@
 #include <ShlObj.h>
 #include <direct.h>
 #define chdir _chdir
+#undef ERROR // Workaround for glog to define ERROR level
 #elif defined(__unix__) or defined(__MACH__)
 #include "limits.h"
 #include "unistd.h"
@@ -25,10 +26,8 @@
 #include "archive.h"
 #include "archive_entry.h"
 #include "cxxopts.hpp"
+#include "glog/logging.h"
 #include "libconfig.h++"
-#include "log4cxx/logger.h"
-#include "log4cxx/logmanager.h"
-#include "log4cxx/propertyconfigurator.h"
 #include "nlohmann/json.hpp"
 
 #define separator (char)std::filesystem::path::preferred_separator
@@ -36,6 +35,8 @@
 namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
+using Config = libconfig::Config;
+using ConfigParseException = libconfig::ParseException;
 using dir_entry = std::filesystem::directory_entry;
 using exception = std::exception;
 using exception_ptr = std::exception_ptr;
@@ -45,6 +46,8 @@ using file_output = std::ofstream;
 using json = nlohmann::json;
 template<class Key, class T>
 using map = std::map<Key, std::less<Key>, std::allocator<std::pair<const Key, T>>>;
+using Options = cxxopts::Options;
+using OptionsResult = cxxopts::ParseResult;
 template<class Key, class T>
 using pair = std::pair<Key, T>;
 using steady_clock = std::chrono::steady_clock;

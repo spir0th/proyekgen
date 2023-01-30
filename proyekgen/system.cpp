@@ -37,14 +37,12 @@ bool SystemRuntime::is_admin_or_root()
 /*
 Exits program with code.
 
-This function is internally used by fatal errors.
+Unused, this was used to terminate when log4cxx was used for logging.
 */
 void SystemRuntime::fatal(int code)
 {
 	exit(code);
 }
-
-log4cxx::LoggerPtr SystemBasePaths::_logger(get_logger("SystemBasePaths"));
 
 /*
 Get the global configuration path.
@@ -78,8 +76,7 @@ string SystemBasePaths::global_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		LOG4CXX_FATAL(_logger, "Cannot find ProgramData. (code " << code << ")");
-		SystemRuntime::fatal(code);
+		LOG(FATAL) << "Cannot find ProgramData. (code " << code << ")";
 	}
 
 	wstringstream stream;
@@ -159,8 +156,7 @@ string SystemBasePaths::local_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		LOG4CXX_FATAL(_logger, "Cannot find AppData. (code " << code << ")");
-		SystemRuntime::fatal(code);
+		LOG(FATAL) << "Cannot find AppData. (code " << code << ")";
 	}
 
 	wstringstream stream;

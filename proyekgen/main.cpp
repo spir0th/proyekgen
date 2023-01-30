@@ -1,116 +1,118 @@
-#include "logger.h"
 #include "system.h"
 #include "template.h"
 
 int main(int argc, char *argv[])
 {
-	// Init log4cxx and application configuration
-	log4cxx::LoggerPtr logger = get_logger("main");
+	// Init logging using the glog library
+	FLAGS_logtostdout = 1;
+	FLAGS_colorlogtostdout = 1;
+	google::InitGoogleLogging(argv[0]);
+	google::InstallFailureSignalHandler();
 
+	// Init application configuration
 	for (const string &config_path : SystemPaths::config_paths()) {
 		const string &config_file = config_path + separator + "init.cfg";
-		libconfig::Config config;
+		Config config;
 
 		if (!filesystem::is_regular_file(config_file)) {
 			continue;
 		}
 		try {
 			config.readFile(config_file.c_str());
-		} catch (libconfig::ParseException ex) {
-			LOG4CXX_WARN(logger, "Cannot read configuration file: " << ex.getFile()
-				<< ", at line " << ex.getLine());
+		} catch (ConfigParseException ex) {
+			LOG(WARNING) << "Cannot read configuration file: " << ex.getFile()
+				<< ", at line " << ex.getLine();
 			continue;
 		}
 	}
 
-	// Parse command-line arguments and set some variables if options are passed
-	cxxopts::Options args("proyekgen", string());
+	// Parse command-line arguments
+	Options options = Options("proyekgen", string());
 
-	args.add_options("Template")
+	options.add_options("Template")
 		("t,template", "Specify template name (or path)",
 			cxxopts::value<string>()->default_value(string()))
 		("search-paths", "Append additional search paths",
 			cxxopts::value<vector<string>>()->default_value({}));
-	args.add_options("Output")
+	options.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
 		("mkdir", "Make output directory (can be recursive) if non-existent",
 			cxxopts::value<bool>()->default_value("false"));
-	args.add_options("Logging")
+	options.add_options("Log")
 		("debug", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
-	args.add_options("Misc")
+	options.add_options("Misc")
 		("h,help", "View help information")
 		("v,version", "Print program version");
 
-	args.allow_unrecognised_options();
-	args.parse_positional({"template"});
-	cxxopts::ParseResult result = args.parse(argc, argv);
+	options.allow_unrecognised_options();
+	options.parse_positional({"template"});
+	OptionsResult options_result = options.parse(argc, argv);
 
 	// Print out command-line arguments if debug
-	if (result.arguments().size() > 0) {
-		LOG4CXX_DEBUG(logger, "Command-line arguments:");
+	if (options_result.arguments().size() > 0) {
+		VLOG(1) << "Command-line arguments:";
 
-		for (const cxxopts::KeyValue &arg : result.arguments()) {
-			LOG4CXX_DEBUG(logger, "	" << arg.key() << ": " << arg.value());
+		for (const cxxopts::KeyValue &arg : options_result.arguments()) {
+			VLOG(1) << "	" << arg.key() << ": " << arg.value();
 		}
 	}
-	if (result.unmatched().size() > 0) {
-		LOG4CXX_DEBUG(logger, "Ignored command-line arguments:");
+	if (options_result.unmatched().size() > 0) {
+		VLOG(1) << "Ignored command-line arguments:";
 
-		for (const string &arg : result.unmatched()) {
-			LOG4CXX_DEBUG(logger, "	" << arg);
+		for (const string &arg : options_result.unmatched()) {
+			VLOG(1) << "	" << arg;
 		}
 	}
 
 	// Do specific code when some argument options were passed
-	if (result.count("help")) {
-		cxxopts::Options help = args.custom_help("<TEMPLATE> [OPTIONS...]");
-		LOG4CXX_INFO(logger, help.positional_help(string()).help());
+	if (options_result.count("help")) {
+		Options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
+		LOG(INFO) << help.positional_help(string()).help();
 		return EXIT_SUCCESS;
 	}
-	if (result.count("version")) {
-		LOG4CXX_INFO(logger, "1.0.0");
+	if (options_result.count("version")) {
+		LOG(INFO) << "1.0.0";
 		return EXIT_SUCCESS;
 	}
 
 	// Generate a project using the given template from the command-line arguments
-	TemplateLibrary library = TemplateLibrary(result["search-paths"].as<vector<string>>());
-	string template_name = (result.count("template")) ? result["template"].as<string>() : string();
-	string output_path = result["output"].as<string>();
+	vector<string> template_search_paths = options_result["search-paths"].as<vector<string>>();
+	string template_name = options_result["template"].as<string>();
+	string output_path = options_result["output"].as<string>();
+	TemplateLibrary library = TemplateLibrary(template_search_paths);
 
 	while (template_name.empty()) {
 		// TODO: Implement shell class to ask input
 		// template_name = input("Specify template name (or path): ");
-		LOG4CXX_FATAL(logger, "Implement shell class to ask template name");
-		SystemRuntime::fatal();
+		LOG(FATAL) << "Implement shell class to ask template name";
 	}
 
 	// Parse existing template and generate it's project data into the output path
-	Template _template = library.get(template_name); // Screw you "template" keyword
+	Template _template = library.get(template_name);
 	steady_clock::time_point start = steady_clock::now();
-	LOG4CXX_DEBUG(logger, "Template:");
-	LOG4CXX_DEBUG(logger, "	name: " + _template.info().name());
-	LOG4CXX_DEBUG(logger, "	author: " + _template.info().author());
-	LOG4CXX_DEBUG(logger, "	full path: " + _template.info().path());
-	LOG4CXX_DEBUG(logger, "Output:");
-	LOG4CXX_DEBUG(logger, "	" + output_path);
+	LOG(INFO) << "Template:";
+	LOG(INFO) << "	name: " + _template.info().name();
+	LOG(INFO) << "	author: " + _template.info().author();
+	LOG(INFO) << "	full path: " + _template.info().path();
+	LOG(INFO) << "Output:";
+	LOG(INFO) << "	" + output_path;
 
 	if (!filesystem::is_directory(output_path)) {
-		if (!result["mkdir"].as<bool>()) {
-			LOG4CXX_FATAL(logger, "Output directory doesn't exist"
-				<< ", append \"--mkdir\" to automatically create one.");
-			SystemRuntime::fatal();
+		if (!options_result["mkdir"].as<bool>()) {
+			LOG(FATAL) << "Output directory doesn't exist,"
+				<< " append \"--mkdir\" to automatically create one.";
 		}
 
-		LOG4CXX_INFO(logger, "Output directory doesn't exist, making a new one.");
+		LOG(INFO) << "Output directory doesn't exist, making a new one.";
 		filesystem::create_directories(output_path);
 	}
 
 	_template.project().extract(output_path);
 
-	// Print elapsed time at the end of process
+	// Log elapsed time at the end of process
 	steady_clock::time_point end = steady_clock::now();
 	long long elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-	LOG4CXX_INFO(logger, "Finished at " + std::to_string(elapsed) + "ms.");
+	LOG(INFO) << "Finished at " << elapsed << "ms.";
 	return 0;
 }
