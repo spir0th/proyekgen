@@ -1,11 +1,11 @@
 # Define target variables
 set(PROYEKGEN_TARGET_NAME "proyekgen")
-set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h")
+set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h" "logger.h")
 set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp")
 
 # Find required libraries
 find_package(cxxopts CONFIG REQUIRED)
-find_package(glog CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
 
@@ -22,7 +22,6 @@ endif()
 add_executable(${PROYEKGEN_TARGET_NAME} ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})
 target_include_directories(${PROYEKGEN_TARGET_NAME} PRIVATE ${LIBCONFIG++_INCLUDE_DIRS})
 target_link_libraries(${PROYEKGEN_TARGET_NAME} PRIVATE
-	cxxopts::cxxopts glog::glog
-	nlohmann_json::nlohmann_json LibArchive::LibArchive
-	${LIBCONFIG++_LIBRARIES}
+	cxxopts::cxxopts spdlog::spdlog spdlog::spdlog_header_only
+	nlohmann_json::nlohmann_json LibArchive::LibArchive ${LIBCONFIG++_LIBRARIES}
 )

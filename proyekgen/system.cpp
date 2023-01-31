@@ -76,7 +76,7 @@ string SystemBasePaths::global_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		LOG(FATAL) << "Cannot find ProgramData. (code " << code << ")";
+		LOG_CRITICAL("Cannot find ProgramData.", code);
 	}
 
 	wstringstream stream;
@@ -130,7 +130,7 @@ string SystemBasePaths::local_config_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		LOG(FATAL) << "Cannot reserve local configuration files.";
+		LOG_CRITICAL("Cannot reserve local configuration files.", 6);
 	}
 
 	stream << "/.proyekgen/config";
@@ -155,7 +155,7 @@ string SystemBasePaths::local_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		LOG(FATAL) << "Cannot find AppData. (code " << code << ")";
+		LOG_CRITICAL("Cannot find AppData.", code);
 	}
 
 	wstringstream stream;
@@ -180,7 +180,7 @@ string SystemBasePaths::local_data_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		LOG(FATAL) << "Cannot reserve local data files.";
+		LOG_CRITICAL("Cannot reserve local data files.", 7);
 	}
 
 	stream << "/.proyekgen";

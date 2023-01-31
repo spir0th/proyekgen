@@ -1,5 +1,6 @@
 #pragma once
 #include "global.h"
+#include "logger.h"
 
 using std::back_inserter;
 using std::count_if;

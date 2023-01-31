@@ -1,13 +1,9 @@
+#include "logger.h"
 #include "system.h"
 #include "template.h"
 
 int main(int argc, char *argv[])
 {
-	// Init Google Logging library to log messages
-	FLAGS_logtostdout = 1;
-	FLAGS_colorlogtostdout = 1;
-	google::InitGoogleLogging(argv[0]);
-
 	// Read application configuration from a list of paths
 	for (const string &config_path : SystemPaths::config_paths()) {
 		const string &config_filepath = config_path + separator + "init.cfg";
@@ -18,9 +14,8 @@ int main(int argc, char *argv[])
 		}
 		try {
 			config_file.readFile(config_filepath.c_str());
-		} catch (config_parse_exception ex) {
-			LOG(WARNING) << "Cannot read configuration file: " << ex.getFile()
-				<< ", at line " << ex.getLine();
+		} catch (libconfig::ParseException ex) {
+			LOG_WARN("Cannot read configuration file {0} at line {1}", ex.getFile(), ex.getLine());
 			continue;
 		}
 	}
@@ -39,7 +34,7 @@ int main(int argc, char *argv[])
 		("mkdir", "Make output directory (can be recursive) if non-existent",
 			cxxopts::value<bool>()->default_value("false"));
 	options.add_options("Log")
-		("v,verbose", "Enable verbose logging", cxxopts::value<bool>()->default_value("false"));
+		("debug", "Enable debug logging", cxxopts::value<bool>()->default_value("false"));
 	options.add_options("Misc")
 		("h,help", "View help information")
 		("version", "Print program version");
@@ -48,30 +43,30 @@ int main(int argc, char *argv[])
 	options.parse_positional({"template"});
 	auto options_result = options.parse(argc, argv);
 
-	// Print out command-line arguments if debug
+	// Log command-line arguments in debugging sink
 	if (options_result.arguments().size() > 0) {
-		VLOG(1) << "Command-line arguments:";
+		LOG_DEBUG("Command-line arguments:");
 
 		for (const cxxopts::KeyValue &arg : options_result.arguments()) {
-			VLOG(1) << "	" << arg.key() << ": " << arg.value();
+			LOG_DEBUG("	{0}: {1}", arg.key(),  arg.value());
 		}
 	}
 	if (options_result.unmatched().size() > 0) {
-		VLOG(1) << "Ignored command-line arguments:";
+		LOG_DEBUG("Ignored command-line arguments:");
 
 		for (const string &arg : options_result.unmatched()) {
-			VLOG(1) << "	" << arg;
+			LOG_DEBUG("	{0}", arg);
 		}
 	}
 
 	// Do specific code when some argument options were passed
 	if (options_result.count("help")) {
 		cmd_options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
-		LOG(INFO) << help.positional_help(string()).help();
+		LOG_INFO(help.positional_help(string()).help());
 		return EXIT_SUCCESS;
 	}
 	if (options_result.count("version")) {
-		LOG(INFO) << "1.0.0";
+		LOG_INFO("1.0.0");
 		return EXIT_SUCCESS;
 	}
 
@@ -84,34 +79,34 @@ int main(int argc, char *argv[])
 	while (template_name.empty()) {
 		// TODO: Implement shell class to ask input
 		// template_name = input("Specify template name (or path): ");
-		LOG(FATAL) << "Implement shell class to ask template name";
+		LOG_CRITICAL("Implement shell class to ask template name", 1);
 	}
 
 	// Parse existing template and generate it's project data into the output path
 	Template _template = library.get(template_name);
 	steady_clock::time_point start = steady_clock::now();
-	LOG(INFO) << "Template:";
-	LOG(INFO) << "	name: " + _template.info().name();
-	LOG(INFO) << "	author: " + _template.info().author();
-	LOG(INFO) << "	full path: " + _template.info().path();
-	LOG(INFO) << "Output:";
-	LOG(INFO) << "	" + output_path;
+	LOG_INFO("Template:");
+	LOG_INFO("	name: {0}", _template.info().name());
+	LOG_INFO("	author: {0}", _template.info().author());
+	LOG_INFO("	full path: {0}", _template.info().path());
+	LOG_INFO("Output:");
+	LOG_INFO("	{0}", output_path);
 
 	if (!filesystem::is_directory(output_path)) {
 		if (!options_result["mkdir"].as<bool>()) {
-			LOG(FATAL) << "Output directory doesn't exist,"
-				<< " append \"--mkdir\" to automatically create one.";
+			LOG_CRITICAL("Output directory doesn't exist,  append \"--mkdir\" to automatically create one.", 2);
 		}
 
-		LOG(INFO) << "Output directory doesn't exist, making a new one.";
+		LOG_INFO("Output directory doesn't exist, making a new one.");
 		filesystem::create_directories(output_path);
 	}
-
-	_template.project().extract(output_path);
+	if (!_template.project().extract(output_path)) {
+		LOG_CRITICAL("Generation failure while extracting project data.", 3);
+	}
 
 	// Log elapsed time at the end of process
 	steady_clock::time_point end = steady_clock::now();
 	long long elapsed = chrono::duration_cast<chrono::milliseconds>(end - start).count();
-	LOG(INFO) << "Finished at " << elapsed << "ms.";
+	LOG_INFO("Finished at {} msecs.", elapsed);
 	return 0;
 }

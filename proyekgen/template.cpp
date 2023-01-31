@@ -32,7 +32,7 @@ TemplateProject::TemplateProject(string path)
 	: _path(path)
 {
 	if (!filesystem::is_regular_file(_path)) {
-		LOG(FATAL) << _path << " does not exist/or is not an archive.";
+		LOG_CRITICAL(_path + " does not exist/or is not an archive.", 8);
 	}
 }
 
@@ -66,7 +66,7 @@ bool TemplateProject::extract(const string &dest)
 	result = archive_read_open_filename(reader, _path.c_str(), 10240);
 
 	if (result != ARCHIVE_OK) {
-		LOG(FATAL) << "Failed to read archive file: " << _path;
+		LOG_CRITICAL("Failed to read archive file: " + _path, 9);
 	}
 	for (;;) {
 		result = archive_read_next_header(reader, &entry);
@@ -75,7 +75,7 @@ bool TemplateProject::extract(const string &dest)
 			break;
 		}
 		if (result < ARCHIVE_OK) {
-			LOG(ERROR) << archive_error_string(reader);
+			LOG_ERR(archive_error_string(reader));
 			return false;
 		}
 		if (result < ARCHIVE_WARN) {
@@ -83,16 +83,16 @@ bool TemplateProject::extract(const string &dest)
 		}
 
 		result = archive_write_header(writer, entry);
-		VLOG(1) << "Extracting: " << archive_entry_pathname(entry);
+		LOG_DEBUG("Extracting: {0}", archive_entry_pathname(entry));
 
 		if (result < ARCHIVE_OK) {
-			LOG(ERROR) << archive_error_string(writer);
+			LOG_ERR(archive_error_string(writer));
 			return false;
 		} else if (archive_entry_size(entry) > 0) {
 			result = copy(reader, writer);
 
 			if (result < ARCHIVE_OK) {
-				LOG(ERROR) << archive_error_string(writer);
+				LOG_ERR(archive_error_string(writer));
 				return false;
 			}
 			if (result < ARCHIVE_WARN) {
@@ -103,7 +103,7 @@ bool TemplateProject::extract(const string &dest)
 		result = archive_write_finish_entry(writer);
 
 		if (result < ARCHIVE_OK) {
-			LOG(ERROR) << archive_error_string(writer);
+			LOG_ERR(archive_error_string(writer));
 			return false;
 		}
 		if (result < ARCHIVE_WARN) {
@@ -140,7 +140,7 @@ int TemplateProject::copy(struct archive *r, struct archive *w)
 		result = archive_write_data_block(w, buffer, size, offset);
 
 		if (result < ARCHIVE_OK) {
-			LOG(ERROR) << archive_error_string(w);
+			LOG_ERR(archive_error_string(w));
 			return result;
 		}
 	}
@@ -220,7 +220,7 @@ in a fatal error if the template doesn't exist.
 Template TemplateLibrary::get(const string &name)
 {
 	if (!exists(name)) {
-		LOG(FATAL) << "Cannot find template with the matching name: " << name;
+		LOG_CRITICAL("Cannot find template with the matching name: " + name, 10);
 	}
 
 	string full_path = get_path(name);
@@ -255,7 +255,7 @@ in a fatal error if the template doesn't exist.
 bool TemplateLibrary::remove(string name)
 {
 	if (!exists(name)) {
-		LOG(ERROR) << "Cannot find template with the matching name: " << name;
+		LOG_CRITICAL("Cannot find template with the matching name: " + name, 10);
 	}
 	if (file_path(name).is_relative()) {
 		for (string t : list()) {

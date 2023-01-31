@@ -1,8 +1,7 @@
 #pragma once
 #include "global.h"
+#include "logger.h"
 #include "system.h"
-
-namespace filesystem = std::filesystem;
 
 using std::make_move_iterator;
 

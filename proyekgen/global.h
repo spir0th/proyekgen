@@ -17,7 +17,6 @@
 #include <ShlObj.h>
 #include <direct.h>
 #define chdir _chdir
-#undef ERROR // Workaround for glog to define ERROR level
 #elif defined(__unix__) or defined(__MACH__)
 #include "limits.h"
 #include "unistd.h"
@@ -26,9 +25,9 @@
 #include "archive.h"
 #include "archive_entry.h"
 #include "cxxopts.hpp"
-#include "glog/logging.h"
 #include "libconfig.h++"
 #include "nlohmann/json.hpp"
+#include "spdlog/spdlog.h"
 
 #define separator (char)std::filesystem::path::preferred_separator
 
@@ -36,7 +35,6 @@ namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
 using config = libconfig::Config;
-using config_parse_exception = libconfig::ParseException;
 using dir_entry = std::filesystem::directory_entry;
 using exception = std::exception;
 using exception_ptr = std::exception_ptr;

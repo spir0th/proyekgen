@@ -57,10 +57,10 @@ Alternatively, you can also look for them by navigating the following paths:
 - Must have CMake installed
 - Must have the following libraries installed/or built:
   - cxxopts
-  - glog
   - nlohmann-json
   - libarchive
   - libconfig
+  - spdlog
 
 On Windows, you can install the libraries by using [Conan](https://conan.io/)
 or [vcpkg](https://vcpkg.io)
@@ -203,7 +203,7 @@ $ proot-distro login arch
 # Logged inside Arch Linux
 ...
 $ pacman -Syu # optional
-$ pacman -S base-devel git cmake cxxopts google-glog nlohmann-json libarchive libconfig
+$ pacman -S base-devel git cmake cxxopts nlohmann-json libarchive libconfig spdlog
 ```
 
 Notes:
