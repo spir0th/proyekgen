@@ -1,4 +1,4 @@
-# Define project variables
+# Define target variables
 set(PROYEKGEN_TARGET_NAME "proyekgen")
 set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h")
 set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp")
