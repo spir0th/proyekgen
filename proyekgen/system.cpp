@@ -130,8 +130,7 @@ string SystemBasePaths::local_config_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		LOG4CXX_FATAL(_logger, "Cannot reserve local configuration files.");
-		SystemRuntime::fatal();
+		LOG(FATAL) << "Cannot reserve local configuration files.";
 	}
 
 	stream << "/.proyekgen/config";
@@ -181,8 +180,7 @@ string SystemBasePaths::local_data_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		LOG4CXX_FATAL(_logger, "Cannot reserve local data files.");
-		SystemRuntime::fatal();
+		LOG(FATAL) << "Cannot reserve local data files.";
 	}
 
 	stream << "/.proyekgen";
