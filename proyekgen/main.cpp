@@ -4,6 +4,13 @@
 
 int main(int argc, char *argv[])
 {
+	// Initialize application logging powered by spdlog
+	spdlog::set_pattern("[%l] %v");
+	spdlog::set_error_handler([](const string& msg) {
+		using std::clog, std::endl;
+		clog << "Logging error occurred: " << msg << endl;
+	});
+
 	// Read application configuration from a list of paths
 	for (const string &config_path : SystemPaths::config_paths()) {
 		const string &config_filepath = config_path + separator + "init.cfg";
@@ -43,6 +50,11 @@ int main(int argc, char *argv[])
 	options.parse_positional({"template"});
 	auto options_result = options.parse(argc, argv);
 
+	// Set level to debug if --debug option is passed
+	if (options_result["debug"].as<bool>()) {
+		spdlog::set_level(spdlog::level::debug);
+	}
+
 	// Log command-line arguments in debugging sink
 	if (options_result.arguments().size() > 0) {
 		LOG_DEBUG("Command-line arguments:");
@@ -59,14 +71,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	// Do specific code when some argument options were passed
+	// Help and Version options passing code
 	if (options_result.count("help")) {
 		cmd_options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
-		LOG_INFO(help.positional_help(string()).help());
+		LOG_INFO_RAW(help.positional_help(string()).help());
 		return EXIT_SUCCESS;
 	}
 	if (options_result.count("version")) {
-		LOG_INFO("1.0.0");
+		LOG_INFO_RAW("1.0.0");
 		return EXIT_SUCCESS;
 	}
 

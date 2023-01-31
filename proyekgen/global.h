@@ -28,6 +28,7 @@
 #include "libconfig.h++"
 #include "nlohmann/json.hpp"
 #include "spdlog/spdlog.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 #define separator (char)std::filesystem::path::preferred_separator
 
