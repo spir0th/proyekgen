@@ -2,14 +2,17 @@
 #include "system.h"
 #include "template.h"
 
+void log_error_handler(const string &msg)
+{
+	using std::clog, std::endl;
+	clog << "Logging error occurred: " << msg << endl;
+}
+
 int main(int argc, char *argv[])
 {
 	// Initialize application logging powered by spdlog
-	spdlog::set_pattern("[%l] %v");
-	spdlog::set_error_handler([](const string& msg) {
-		using std::clog, std::endl;
-		clog << "Logging error occurred: " << msg << endl;
-	});
+	spdlog::set_pattern("%^%v%$");
+	spdlog::set_error_handler(log_error_handler);
 
 	// Read application configuration from a list of paths
 	for (const string &config_path : SystemPaths::config_paths()) {
@@ -33,24 +36,24 @@ int main(int argc, char *argv[])
 	options.add_options("Template")
 		("t,template", "Specify template name (or path)",
 			cxxopts::value<string>()->default_value(string()))
-		("search-paths", "Append additional search paths",
+		("s,search-paths", "Append additional search paths",
 			cxxopts::value<vector<string>>()->default_value({}));
 	options.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
-		("mkdir", "Make output directory (can be recursive) if non-existent",
+		("m,mkdir", "Make output directory if does not exist",
 			cxxopts::value<bool>()->default_value("false"));
 	options.add_options("Log")
-		("debug", "Enable debug logging", cxxopts::value<bool>()->default_value("false"));
+		("d,debug", "Show debug logs", cxxopts::value<bool>()->default_value("false"));
 	options.add_options("Misc")
 		("h,help", "View help information")
-		("version", "Print program version");
+		("v,version", "Print program version");
 
 	options.allow_unrecognised_options();
 	options.parse_positional({"template"});
 	auto options_result = options.parse(argc, argv);
 
-	// Set level to debug if --debug option is passed
+	// Do something to Logging options
 	if (options_result["debug"].as<bool>()) {
 		spdlog::set_level(spdlog::level::debug);
 	}
@@ -71,7 +74,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	// Help and Version options passing code
+	// Do something to Misc options
 	if (options_result.count("help")) {
 		cmd_options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
 		LOG_INFO_RAW(help.positional_help(string()).help());

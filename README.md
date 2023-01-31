@@ -18,7 +18,7 @@ $ proyekgen <TEMPLATE> --output mydir # alternative option
 ```
 
 *Note: proyekgen will result in a fatal error if*
-*the directory doesn't exist. Pass the `--mkdir` option to create it.*
+*the directory doesn't exist. Pass the `-m` or `--mkdir` option to create it.*
 
 ### List installed templates
 You can get the list of installed templates using the `-l` option:
