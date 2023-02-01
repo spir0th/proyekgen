@@ -6,7 +6,7 @@
 using std::make_move_iterator;
 
 /*
-Unused enumeration class, may be used later in the future.
+ * Unused enumeration class, may be used later in the future.
 */
 enum class TemplatePlatform
 {
@@ -14,7 +14,7 @@ enum class TemplatePlatform
 };
 
 /*
-A class that contains the template's information.
+ * A class that contains the template's information.
 */
 class TemplateInfo
 {
@@ -33,7 +33,7 @@ private:
 };
 
 /*
-A class that carries the template's project data.
+ * A class that carries the template's project data.
 */
 class TemplateProject
 {
@@ -49,7 +49,7 @@ private:
 };
 
 /*
-The class that holds everything about the template.
+ * The class that holds everything about the template.
 */
 class Template
 {
@@ -65,7 +65,7 @@ private:
 };
 
 /*
-An utility class that manages templates easily.
+ * An utility class that manages templates easily.
 */
 class TemplateLibrary
 {

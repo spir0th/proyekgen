@@ -1,11 +1,11 @@
 #include "system.h"
 
 /*
-Returns if current user that executed this program is
-an administrator or has root privileges.
-
-This function uses low-level OS-underlying functions, if
-the current OS doesn't have implementation, it returns false.
+ * Returns if current user that executed this program is
+ * an administrator or has root privileges.
+ * 
+ * This function uses low-level OS-underlying functions, if
+ * the current OS doesn't have implementation, it returns false.
 */
 bool SystemRuntime::is_admin_or_root()
 {
@@ -35,9 +35,9 @@ bool SystemRuntime::is_admin_or_root()
 }
 
 /*
-Exits program with code.
-
-Unused, this was used to terminate when log4cxx was used for logging.
+ * Exits program with code.
+ * 
+ * Unused, this was used to terminate when log4cxx was used for logging.
 */
 void SystemRuntime::fatal(int code)
 {
@@ -45,10 +45,10 @@ void SystemRuntime::fatal(int code)
 }
 
 /*
-Get the global configuration path.
+ * Get the global configuration path.
 
-On Windows, this returns the global_data_path function
-meanwhile "/etc/proyekgen" on UNIX-based systems.
+ * On Windows, this returns the global_data_path function
+ * meanwhile "/etc/proyekgen" on UNIX-based systems.
 */
 string SystemBasePaths::global_config_path()
 {
@@ -63,10 +63,10 @@ string SystemBasePaths::global_config_path()
 }
 
 /*
-Get the global data path.
-
-On Windows, this returns "%PROGRAMDATA%\proyekgen"
-meanwhile "/var/lib/proyekgen" on UNIX-based systems.
+ * Get the global data path.
+ * 
+ * On Windows, this returns "%PROGRAMDATA%\proyekgen"
+ * meanwhile "/var/lib/proyekgen" on UNIX-based systems.
 */
 string SystemBasePaths::global_data_path()
 {
@@ -99,10 +99,10 @@ string SystemBasePaths::global_data_path()
 }
 
 /*
-Get the global template path.
-
-This returns the global_data_path function
-with the preferred path separator and "templates"
+ * Get the global template path.
+ * 
+ * This returns the global_data_path function
+ * with the preferred path separator and "templates"
 */
 string SystemBasePaths::global_templates_path()
 {
@@ -110,10 +110,10 @@ string SystemBasePaths::global_templates_path()
 }
 
 /*
-Get the local configuration path.
-
-Unlike global_config_path, this function returns the local_data_path function
-with the preferred path separator and "config"
+ * Get the local configuration path.
+ * 
+ * Unlike global_config_path, this function returns the local_data_path function
+ * with the preferred path separator and "config"
 */
 string SystemBasePaths::local_config_path()
 {
@@ -141,11 +141,11 @@ string SystemBasePaths::local_config_path()
 }
 
 /*
-Get the local data path.
-
-On Windows, this returns "%APPDATA%\proyekgen"
-meanwhile respective XDG directory specification (or
-"$HOME/.proyekgen" in fallback) on UNIX-based systems.
+ * Get the local data path.
+ * 
+ * On Windows, this returns "%APPDATA%\proyekgen"
+ * meanwhile respective XDG directory specification (or
+ * "$HOME/.proyekgen" in fallback) on UNIX-based systems.
 */
 string SystemBasePaths::local_data_path()
 {
@@ -191,10 +191,10 @@ string SystemBasePaths::local_data_path()
 }
 
 /*
-Get the local template path
-
-This returns the local_data_path function
-with the preferred path separator and "templates"
+ * Get the local template path
+ * 
+ * This returns the local_data_path function
+ * with the preferred path separator and "templates"
 */
 string SystemBasePaths::local_templates_path()
 {
@@ -202,10 +202,10 @@ string SystemBasePaths::local_templates_path()
 }
 
 /*
-Get the executable path
-
-This function uses low-level OS-underlying functions, if
-the current OS doesn't have implementation, it returns an empty string.
+ * Get the executable path
+ * 
+ * This function uses low-level OS-underlying functions, if
+ * the current OS doesn't have implementation, it returns an empty string.
 */
 string SystemPaths::executable_path()
 {
@@ -231,7 +231,7 @@ string SystemPaths::executable_path()
 }
 
 /*
-Get the current working path
+ * Get the current working path
 */
 string SystemPaths::current_path()
 {
@@ -239,10 +239,10 @@ string SystemPaths::current_path()
 }
 
 /*
-Get the list of configuration paths
-
-If the current user is not an admin / has no root privileges,
-the first path (which is SystemBasePaths::global_config_path) is an empty string.
+ * Get thelist of configuration paths
+ * 
+ * If the current user is not an admin / has no root privileges,
+ * the first path (which is SystemBasePaths::global_config_path) is an empty string.
 */
 vector<string> SystemPaths::config_paths()
 {
@@ -250,10 +250,10 @@ vector<string> SystemPaths::config_paths()
 }
 
 /*
-Get the list of data paths
-
-If the current user is not an admin / has no root privileges,
-the first path (which is SystemBasePaths::global_data_path) is an empty string.
+ * Get the list of data paths
+ * 
+ * If the current user is not an admin / has no root privileges,
+ * the first path (which is SystemBasePaths::global_data_path) is an empty string.
 */
 vector<string> SystemPaths::data_paths()
 {
@@ -261,10 +261,10 @@ vector<string> SystemPaths::data_paths()
 }
 
 /*
-Get the list of template paths
-
-If the current user is not an admin / has no root privileges,
-the first path (which is SystemBasePaths::global_templates_path) is an empty string.
+ * Get the list of template paths
+ * 
+ * If the current user is not an admin / has no root privileges,
+ * the first path (which is SystemBasePaths::global_templates_path) is an empty string.
 */
 vector<string> SystemPaths::template_paths()
 {

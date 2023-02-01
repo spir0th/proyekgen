@@ -8,7 +8,7 @@ using std::to_string;
 using std::transform;
 
 /*
-An utility class that provides runtime functions
+ * An utility class that provides runtime functions.
 */
 class SystemRuntime
 {
@@ -18,10 +18,10 @@ public:
 };
 
 /*
-Internally used by the SystemPaths class.
-
-Accessing functions from this class might not be recommended
-as they provide separate functions for non-root/root privileges.
+ * Internally used by the SystemPaths class.
+ * 
+ * Accessing functions from this class might not be recommended
+ * as they provide separate functions for non-root/root privileges.
 */
 class SystemBasePaths
 {
@@ -35,7 +35,7 @@ public:
 };
 
 /*
-An utility class that provides path-reserved functions
+ * An utility class that provides path-reserved functions.
 */
 class SystemPaths
 {
