@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
 		("h,help", "View help information")
 		("v,version", "Print program version");
 
-	options_parser.allow_unrecognised_options();
 	options_parser.parse_positional({"template"});
 	auto options = options_parser.parse(argc, argv);
 
