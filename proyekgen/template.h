@@ -1,6 +1,5 @@
 #pragma once
 #include "global.h"
-#include "logger.h"
 #include "system.h"
 
 using std::make_move_iterator;

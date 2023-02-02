@@ -1,19 +1,8 @@
-#include "logger.h"
 #include "system.h"
 #include "template.h"
 
-void log_error_handler(const string &msg)
-{
-	using std::clog, std::endl;
-	clog << "Logging error occurred: " << msg << endl;
-}
-
 int main(int argc, char *argv[])
 {
-	// Initialize application logging powered by spdlog
-	spdlog::set_pattern("%^%v%$");
-	spdlog::set_error_handler(log_error_handler);
-
 	// Read application configuration from a list of paths
 	for (const string &config_path : SystemPaths::config_paths()) {
 		const string &config_filepath = config_path + separator + "init.cfg";
@@ -25,86 +14,70 @@ int main(int argc, char *argv[])
 		try {
 			config_file.readFile(config_filepath.c_str());
 		} catch (libconfig::ParseException ex) {
-			LOG_WARN("Cannot read configuration file {0} at line {1}", ex.getFile(), ex.getLine());
+			fmt::print("Cannot read configuration file {0:s} at {1:s}\n", ex.getFile(), ex.getLine());
 			continue;
 		}
 	}
 
 	// Parse command-line arguments
-	cmd_options options = cmd_options("proyekgen", string());
+	cmd_options options_parser = cmd_options("proyekgen", string());
 
-	options.add_options("Template")
+	options_parser.add_options("Template")
 		("t,template", "Specify template name (or path)",
 			cxxopts::value<string>()->default_value(string()))
 		("s,search-paths", "Append additional search paths",
 			cxxopts::value<vector<string>>()->default_value({}))
 		("l,list", "List installed templates");
-	options.add_options("Output")
+	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
-		("m,mkdir", "Make output directory if does not exist",
+		("m,mkdir", "Make output directory if it does not exist",
 			cxxopts::value<bool>()->default_value("false"));
-	options.add_options("Log")
-		("d,debug", "Show debug logs", cxxopts::value<bool>()->default_value("false"));
-	options.add_options("Misc")
+	options_parser.add_options("Misc")
 		("h,help", "View help information")
 		("v,version", "Print program version");
 
-	options.allow_unrecognised_options();
-	options.parse_positional({"template"});
-	auto options_result = options.parse(argc, argv);
-
-	// Enable log debugging if passed from command-line options
-	if (options_result["debug"].as<bool>()) {
-		spdlog::set_level(spdlog::level::debug);
-	}
-
-	// Log command-line options in the debug sink
-	if (options_result.arguments().size() > 0) {
-		LOG_DEBUG("Command-line arguments:");
-
-		for (const cxxopts::KeyValue &arg : options_result.arguments()) {
-			LOG_DEBUG("	{0}: {1}", arg.key(),  arg.value());
-		}
-	}
-	if (options_result.unmatched().size() > 0) {
-		LOG_DEBUG("Ignored command-line arguments:");
-
-		for (const string &arg : options_result.unmatched()) {
-			LOG_DEBUG("	{0}", arg);
-		}
-	}
+	options_parser.allow_unrecognised_options();
+	options_parser.parse_positional({"template"});
+	auto options = options_parser.parse(argc, argv);
 
 	// Show help info or print program version if passed from command-line options
-	if (options_result.count("help")) {
-		cmd_options help = options.custom_help("<TEMPLATE> [OPTIONS...]");
-		LOG_INFO(help.positional_help(string()).help());
+	if (options.count("help")) {
+		fmt::print("{0:s}\n", options_parser.custom_help("<TEMPLATE> [OPTIONS...]").help());
 		return EXIT_SUCCESS;
 	}
-	if (options_result.count("version")) {
-		LOG_INFO("1.0.0");
+	if (options.count("version")) {
+		fmt::print("{0:s}\n", "1.0.0");
 		return EXIT_SUCCESS;
 	}
 
 	// Find the given template from the command-line options
-	vector<string> template_search_paths = options_result["search-paths"].as<vector<string>>();
-	string template_name = options_result["template"].as<string>();
-	string output_path = options_result["output"].as<string>();
+	vector<string> template_search_paths = options["search-paths"].as<vector<string>>();
+	string template_name = options["template"].as<string>();
+	string output_path = options["output"].as<string>();
 	TemplateLibrary library = TemplateLibrary(template_search_paths);
 
 	// List installed templates if passed from command-line options
-	if (options_result.count("list")) {
+	if (options.count("list")) {
 		vector<string> templates = library.list();
 
-		LOG_INFO("There are {0} template(s) installed{1}", templates.size()
-			, (templates.size() > 0) ? ":" : ".");
-
+		if (templates.size() > 0) {
+			fmt::print("There are {0:d} templates installed:\n", templates.size());
+		} else {
+			fmt::print("There are no templates installed.\n", templates.size());
+			// TODO: Print a help link that leads to templates.
+		}
 		for (const string &template_name : templates) {
 			Template _template = library.get(template_name);
 			TemplateInfo info = _template.info();
+			string name = file_path(info.path()).filename().string();
+			string author = "(" + info.author() + ")";
 
-			LOG_INFO("	{0} {1}", file_path(info.path()).filename().string(),
-				(info.name().length() > 0) ? "(" + info.name() + ")" : string());
+			if (info.author().empty()) {
+				author = string();
+			}
+
+			fmt::print("	{0:s} {1:s}\n", name, author);
 		}
 
 		return EXIT_SUCCESS;
@@ -113,33 +86,37 @@ int main(int argc, char *argv[])
 	while (template_name.empty()) {
 		// TODO: Implement shell class to ask input
 		// template_name = input("Specify template name (or path): ");
-		LOG_CRITICAL("Implement shell class to ask template name", 1);
+		fmt::print("Implement shell class to ask template name\n");
+		SystemRuntime::fatal();
 	}
 
 	Template _template = library.get(template_name);
 
 	// Generate project using given template and it's project data
-	stopwatch elapsed;
-	LOG_INFO("Template:");
-	LOG_INFO("	name: {0}", _template.info().name());
-	LOG_INFO("	author: {0}", _template.info().author());
-	LOG_INFO("	full path: {0}", _template.info().path());
-	LOG_INFO("Output:");
-	LOG_INFO("	{0}", output_path);
+	steady_clock::time_point timer_start = steady_clock::now();
+	fmt::print("Template:\n");
+	fmt::print("	name: {0:s}\n", _template.info().name());
+	fmt::print("	author: {0:s}\n", _template.info().author());
+	fmt::print("	path: {0:s}\n", _template.info().path());
+	fmt::print("Output:\n");
+	fmt::print("	{0:s}\n", output_path);
 
 	if (!filesystem::is_directory(output_path)) {
-		if (!options_result["mkdir"].as<bool>()) {
-			LOG_CRITICAL("Output directory doesn't exist,  append \"--mkdir\" to automatically create one.", 2);
+		if (!options["mkdir"].as<bool>()) {
+			fmt::print("Output directory doesn't exist, append \"--mkdir\" to automatically create one.\n");
+			SystemRuntime::fatal();
 		}
 
-		LOG_INFO("Output directory doesn't exist, making a new one.");
+		fmt::print("Output directory doesn't exist, making a new one.\n");
 		filesystem::create_directories(output_path);
 	}
 	if (!_template.project().extract(output_path)) {
-		LOG_CRITICAL("Generation failure while extracting project data.", 3);
+		fmt::print("Generation failure while extracting project data.\n");
 	}
 
 	// Log elapsed time at the end of process
-	LOG_INFO("Finished at {} msecs.", elapsed);
+	steady_clock::time_point timer_end = steady_clock::now();
+	chrono::duration<double> timer_diff = timer_end - timer_start;
+	fmt::print("Finished at {0} milliseconds.\n", timer_diff);
 	return 0;
 }

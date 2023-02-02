@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <chrono>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -24,13 +25,16 @@
 #include "archive.h"
 #include "archive_entry.h"
 #include "cxxopts.hpp"
+#include "fmt/chrono.h"
+#include "fmt/color.h"
+#include "fmt/core.h"
+#include "fmt/ranges.h"
 #include "libconfig.h++"
 #include "nlohmann/json.hpp"
-#include "spdlog/spdlog.h"
-#include "spdlog/stopwatch.h"
 
 #define separator (char)std::filesystem::path::preferred_separator
 
+namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
 using config = libconfig::Config;
@@ -46,7 +50,7 @@ template<class Key, class T>
 using map = std::map<Key, std::less<Key>, std::allocator<std::pair<const Key, T>>>;
 template<class Key, class T>
 using pair = std::pair<Key, T>;
-using stopwatch = spdlog::stopwatch;
+using steady_clock = std::chrono::steady_clock;
 using string = std::string;
 using stringstream = std::stringstream;
 template<class T>

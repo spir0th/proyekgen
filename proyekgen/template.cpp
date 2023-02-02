@@ -32,7 +32,8 @@ TemplateProject::TemplateProject(string path)
 	: _path(path)
 {
 	if (!filesystem::is_regular_file(_path)) {
-		LOG_CRITICAL(_path + " does not exist/or is not an archive.", 8);
+		fmt::print("{0:s} does not exist/or is not a file.\n", _path);
+		SystemRuntime::fatal();
 	}
 }
 
@@ -66,7 +67,8 @@ bool TemplateProject::extract(const string &dest)
 	result = archive_read_open_filename(reader, _path.c_str(), 10240);
 
 	if (result != ARCHIVE_OK) {
-		LOG_CRITICAL("Failed to read archive file: " + _path, 9);
+		fmt::print("Failed to read template data: {0:s}", _path);
+		SystemRuntime::fatal();
 	}
 	for (;;) {
 		result = archive_read_next_header(reader, &entry);
@@ -75,7 +77,7 @@ bool TemplateProject::extract(const string &dest)
 			break;
 		}
 		if (result < ARCHIVE_OK) {
-			LOG_ERR(archive_error_string(reader));
+			fmt::print("{0:s}\n", archive_error_string(reader));
 			return false;
 		}
 		if (result < ARCHIVE_WARN) {
@@ -83,16 +85,16 @@ bool TemplateProject::extract(const string &dest)
 		}
 
 		result = archive_write_header(writer, entry);
-		LOG_DEBUG("Extracting: {0}", archive_entry_pathname(entry));
+		fmt::print("Writing file: {0:s}\n", archive_entry_pathname(entry));
 
 		if (result < ARCHIVE_OK) {
-			LOG_ERR(archive_error_string(writer));
+			fmt::print("{0:s}\n", archive_error_string(writer));
 			return false;
 		} else if (archive_entry_size(entry) > 0) {
 			result = copy(reader, writer);
 
 			if (result < ARCHIVE_OK) {
-				LOG_ERR(archive_error_string(writer));
+				fmt::print("{0:s}\n", archive_error_string(writer));
 				return false;
 			}
 			if (result < ARCHIVE_WARN) {
@@ -103,7 +105,7 @@ bool TemplateProject::extract(const string &dest)
 		result = archive_write_finish_entry(writer);
 
 		if (result < ARCHIVE_OK) {
-			LOG_ERR(archive_error_string(writer));
+			fmt::print("{0:s}\n", archive_error_string(writer));
 			return false;
 		}
 		if (result < ARCHIVE_WARN) {
@@ -140,7 +142,7 @@ int TemplateProject::copy(struct archive *r, struct archive *w)
 		result = archive_write_data_block(w, buffer, size, offset);
 
 		if (result < ARCHIVE_OK) {
-			LOG_ERR(archive_error_string(w));
+			fmt::print("{0:s}\n", archive_error_string(w));
 			return result;
 		}
 	}
@@ -220,7 +222,8 @@ vector<string> TemplateLibrary::list()
 Template TemplateLibrary::get(const string &name)
 {
 	if (!exists(name)) {
-		LOG_CRITICAL("Cannot find template with the matching name: " + name, 10);
+		fmt::print("Cannot find template with the matching name: {0:s}\n", name);
+		SystemRuntime::fatal();
 	}
 
 	string full_path = get_path(name);
@@ -255,7 +258,8 @@ Template TemplateLibrary::get(const string &name)
 bool TemplateLibrary::remove(string name)
 {
 	if (!exists(name)) {
-		LOG_CRITICAL("Cannot find template with the matching name: " + name, 10);
+		fmt::print("Cannot find template with the matching name: {0:s}\n", name);
+		SystemRuntime::fatal();
 	}
 	if (file_path(name).is_relative()) {
 		for (string t : list()) {

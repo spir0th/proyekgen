@@ -36,8 +36,6 @@ bool SystemRuntime::is_admin_or_root()
 
 /*
  * Exits program with code.
- * 
- * Unused, this was used to terminate when log4cxx was used for logging.
 */
 void SystemRuntime::fatal(int code)
 {
@@ -76,7 +74,8 @@ string SystemBasePaths::global_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_ProgramData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		LOG_CRITICAL("Cannot find ProgramData.", code);
+		fmt::print("Cannot find ProgramData.\n");
+		SystemRuntime::fatal(code);
 	}
 
 	wstringstream stream;
@@ -130,7 +129,8 @@ string SystemBasePaths::local_config_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		LOG_CRITICAL("Cannot reserve local configuration files.", 6);
+		fmt::print("Cannot reserve local configuration files.\n");
+		SystemRuntime::fatal();
 	}
 
 	stream << "/.proyekgen/config";
@@ -155,7 +155,8 @@ string SystemBasePaths::local_data_path()
 	code = SHGetKnownFolderPath(FOLDERID_RoamingAppData, 0, NULL, &path);
 
 	if (code == E_FAIL) {
-		LOG_CRITICAL("Cannot find AppData.", code);
+		fmt::print("Cannot find AppData.\n");
+		SystemRuntime::fatal(code);
 	}
 
 	wstringstream stream;
@@ -180,7 +181,7 @@ string SystemBasePaths::local_data_path()
 	} else if (fallback_path != nullptr) {
 		stream << fallback_path;
 	} else {
-		LOG_CRITICAL("Cannot reserve local data files.", 7);
+		fmt::print("Cannot reserve local data files.\n");
 	}
 
 	stream << "/.proyekgen";
