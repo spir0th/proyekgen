@@ -1,5 +1,6 @@
 # Define target variables
 set(PROYEKGEN_TARGET_NAME "proyekgen")
+set(PROYEKGEN_TARGET_VERSION ${PROJECT_VERSION})
 set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h")
 set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp")
 
@@ -20,6 +21,10 @@ endif()
 
 # Generate executable and link libraries
 add_executable(${PROYEKGEN_TARGET_NAME} ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})
+target_compile_definitions(${PROYEKGEN_TARGET_NAME} PUBLIC
+	PROYEKGEN_HELP_NAME="${PROYEKGEN_TARGET_NAME}"
+	PROYEKGEN_HELP_VERSION="${PROYEKGEN_TARGET_VERSION}"
+)
 target_include_directories(${PROYEKGEN_TARGET_NAME} PRIVATE ${LIBCONFIG++_INCLUDE_DIRS})
 target_link_libraries(${PROYEKGEN_TARGET_NAME} PRIVATE
 	cxxopts::cxxopts fmt::fmt nlohmann_json::nlohmann_json

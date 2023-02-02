@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Parse command-line arguments
-	cmd_options options_parser = cmd_options("proyekgen", string());
+	cmd_options options_parser = cmd_options(PROYEKGEN_HELP_NAME, string());
 
 	options_parser.add_options("Template")
 		("t,template", "Specify template name (or path)",
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 	if (options.count("version")) {
-		fmt::print("{0:s}\n", "1.0.0");
+		fmt::print("{0:s}\n", PROYEKGEN_HELP_VERSION);
 		return EXIT_SUCCESS;
 	}
 
