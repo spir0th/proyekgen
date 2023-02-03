@@ -1,3 +1,4 @@
+#include "input.h"
 #include "system.h"
 #include "template.h"
 
@@ -42,7 +43,10 @@ int main(int argc, char *argv[])
 
 	// Show help info or print program version if passed from command-line options
 	if (options.count("help")) {
-		fmt::print("{0:s}\n", options_parser.custom_help("<TEMPLATE> [OPTIONS...]").help());
+		const string help = options_parser.custom_help("<TEMPLATE> [OPTIONS...]")
+			.positional_help(string()).help();
+
+		fmt::print("{0:s}\n", help);
 		return EXIT_SUCCESS;
 	}
 	if (options.count("version")) {
@@ -83,10 +87,8 @@ int main(int argc, char *argv[])
 	}
 
 	while (template_name.empty()) {
-		// TODO: Implement shell class to ask input
-		// template_name = input("Specify template name (or path): ");
-		fmt::print("Implement shell class to ask template name\n");
-		SystemRuntime::fatal();
+		template_name = input("Specify template name (or path): ");
+
 	}
 
 	Template _template = library.get(template_name);
