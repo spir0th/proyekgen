@@ -1,8 +1,8 @@
 # Define target variables
 set(PROYEKGEN_TARGET_NAME "proyekgen")
 set(PROYEKGEN_TARGET_VERSION ${PROJECT_VERSION})
-set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h")
-set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp")
+set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h" "input.h")
+set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp" "input.cpp")
 
 # Find required libraries
 find_package(cxxopts CONFIG REQUIRED)
