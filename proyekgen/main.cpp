@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
 			cxxopts::value<string>()->default_value(string()))
 		("s,search-paths", "Append additional search paths",
 			cxxopts::value<vector<string>>()->default_value({}))
-		("l,list", "List installed templates");
+		("l,list", "List installed templates")
+		("i,info", "Print template information without generating a project");
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
@@ -85,22 +86,27 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 
+	// Always ask for template name if empty
 	while (template_name.empty()) {
 		template_name = input("Specify template name (or path): ");
 	}
 
+	// Parse template and start elapsed timer
 	Template _template = library.get(template_name);
-
-	// Generate project using given template and it's project data
 	steady_clock::time_point timer_start = steady_clock::now();
-	fmt::print("Template:\n");
-	fmt::print("	name: {0:s}\n", _template.info().name());
-	fmt::print("	author: {0:s}\n", _template.info().author());
-	fmt::print("	path: {0:s}\n", _template.info().path());
-	fmt::print("Output:\n");
-	fmt::print("	{0:s}\n\n", output_path);
 
+	if (options.count("info")) {
+		// Print template information then exit without generating a project
+		fmt::print("Template:\n");
+		fmt::print("	name: {0:s}\n", _template.info().name());
+		fmt::print("	author: {0:s}\n", _template.info().author());
+		fmt::print("	path: {0:s}\n", _template.info().path());
+		fmt::print("Output:\n");
+		fmt::print("	{0:s}\n\n", output_path);
+		return EXIT_SUCCESS;
+	}
 	if (!filesystem::is_directory(output_path)) {
+		// Create directories or lead to fatal error if output directory is non-existent
 		if (!options.count("mkdir")) {
 			fmt::print("Output directory doesn't exist, append \"--mkdir\" to automatically create one.\n");
 			SystemRuntime::fatal();
@@ -110,6 +116,7 @@ int main(int argc, char *argv[])
 		filesystem::create_directories(output_path);
 	}
 	if (!_template.project().extract(output_path)) {
+		// Generate project using given template and it's project data
 		fmt::print("Generation failure while extracting project data.\n");
 	}
 	if (options.count("elapsed")) {
