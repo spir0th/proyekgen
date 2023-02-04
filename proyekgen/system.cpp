@@ -247,7 +247,9 @@ string SystemPaths::current_path()
 */
 vector<string> SystemPaths::config_paths()
 {
-	return {SystemBasePaths::global_config_path(), SystemBasePaths::local_config_path()};
+	return {SystemBasePaths::global_config_path(),
+		SystemBasePaths::local_config_path(),
+		current_path() + separator + ".proyekgen"};
 }
 
 /*
@@ -258,7 +260,9 @@ vector<string> SystemPaths::config_paths()
 */
 vector<string> SystemPaths::data_paths()
 {
-	return {SystemBasePaths::global_data_path(), SystemBasePaths::local_data_path()};
+	return {SystemBasePaths::global_data_path(), 
+		SystemBasePaths::local_data_path(),
+		current_path() + separator + ".proyekgen"};
 }
 
 /*
@@ -271,5 +275,5 @@ vector<string> SystemPaths::template_paths()
 {
 	return {SystemBasePaths::global_templates_path(),
 		SystemBasePaths::local_templates_path(),
-		current_path() + separator + ".proyekgen"};
+		current_path() + separator + ".proyekgen" + separator + "templates"};
 }
