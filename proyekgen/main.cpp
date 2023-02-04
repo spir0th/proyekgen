@@ -115,13 +115,13 @@ int main(int argc, char *argv[])
 		filesystem::create_directories(output_path);
 	}
 	if (!_template.project().extract(output_path)) {
-		// Generate project using given template and it's project data
-		fmt::print("Generation failure while extracting project data.\n");
+		// Generate project using given template and extract the project data
+		fmt::print("Generate failure while extracting project data.\n");
 	}
 
 	// Print elapsed time after generating a project
 	steady_clock::time_point timer_end = steady_clock::now();
 	chrono::duration<double> timer_diff = timer_end - timer_start;
-	fmt::print("Finished at {0}.\n", timer_diff);
+	fmt::print("Finished at {0:%H:%M:%S}.\n", timer_diff);
 	return 0;
 }
