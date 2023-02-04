@@ -26,19 +26,19 @@ You can get the list of installed templates using the `-l` option:
 ```shell
 $ proyekgen -l
 There are 5 templates currently installed:
-cmake-c (CMake with C project)
-cmake-cpp (CMake with C++ project)
-makefile-c (Makefile with C project)
-makefile-cpp (Makefile with C++ project)
-python (Simple Python project)
+	cmake-c (CMake with C project)
+	cmake-cpp (CMake with C++ project)
+	makefile-c (Makefile with C project)
+	makefile-cpp (Makefile with C++ project)
+	python (Simple Python project)
 ```
 
 or user-specific installed templates:
 
 ```shell
 $ proyekgen -l --user
-There are 1 template currently installed:
-python (Simple Python project)
+There are 1 templates currently installed:
+	python (Simple Python project)
 ```
 
 Alternatively, you can also look for them by navigating the following paths:
@@ -101,18 +101,18 @@ Notes:
 There are multiple ways to deploy proyekgen for each platform:
 
 - Windows
-  - [EXE installer]()
-  - [ZIP file]()
+  - [EXE installer](#exe-installer)
+  - [ZIP file](#zip-file)
 - UNIX
-  - [Shell script]()
-  - [tar.xz file]()
+  - [Shell script](#shell-script)
+  - [tar.xz file](#tar.xz-file)
 
-You can also use: [Automatic Deployment Script]()
+You can also use: [Automatic Deployment Script](#automatic-deployment-script)
 
 *Note: If you plan to deploy your build, make sure you are following*
 *the correct [build configurations](#build-configurations) for compilation.*
 
-*Note: Build configurations that start with `-release` are only deployed.*
+*Note: Build configurations that start with `-release` suffix are only deployed.*
 
 #### Windows
 ##### EXE installer
