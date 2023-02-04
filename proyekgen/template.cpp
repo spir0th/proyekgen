@@ -169,23 +169,13 @@ TemplateProject Template::project()
 
 TemplateLibrary::TemplateLibrary(const vector<string> &paths)
 {
-	// Add default search paths from SystemPaths
-	const vector<string> &default_paths = SystemPaths::template_paths();
-	search_paths.insert(search_paths.begin(), make_move_iterator(default_paths.begin()),
-		make_move_iterator(default_paths.end()));
-
 	// Also add search paths passed from the constructor arguments
 	search_paths.insert(search_paths.end(), make_move_iterator(paths.begin()),
 		make_move_iterator(paths.end()));
 }
 
 TemplateLibrary::TemplateLibrary()
-{
-	// Only add default search paths from SystemPaths
-	vector<string> default_paths = SystemPaths::template_paths();
-	search_paths.insert(search_paths.begin(), make_move_iterator(default_paths.begin()),
-		make_move_iterator(default_paths.end()));
-}
+{}
 
 /*
  * Get the list of templates in the library
