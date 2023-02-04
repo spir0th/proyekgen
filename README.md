@@ -60,7 +60,7 @@ Alternatively, you can also look for them by navigating the following paths:
   - nlohmann-json
   - libarchive
   - libconfig
-  - spdlog
+  - fmt
 
 On Windows, you can install the libraries by using [Conan](https://conan.io/)
 or [vcpkg](https://vcpkg.io)
@@ -203,7 +203,7 @@ $ proot-distro login arch
 # Logged inside Arch Linux
 ...
 $ pacman -Syu # optional
-$ pacman -S base-devel git cmake cxxopts nlohmann-json libarchive libconfig spdlog
+$ pacman -S base-devel git cmake cxxopts nlohmann-json libarchive libconfig fmt
 ```
 
 Notes:
