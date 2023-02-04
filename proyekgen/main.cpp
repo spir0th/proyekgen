@@ -73,14 +73,14 @@ int main(int argc, char *argv[])
 		for (const string &template_name : templates) {
 			Template _template = library.get(template_name);
 			TemplateInfo info = _template.info();
-			string name = file_path(info.path()).filename().string();
-			string author = "(" + info.author() + ")";
+			string path_name = file_path(info.path()).filename().string();
+			string name = "(" + info.name() + ")";
 
-			if (info.author().empty()) {
-				author = string();
+			if (info.name().empty()) {
+				name.clear();
 			}
 
-			fmt::print("	{0:s} {1:s}\n", name, author);
+			fmt::print("	{0:s} {1:s}\n", path_name, name);
 		}
 
 		return EXIT_SUCCESS;
@@ -88,7 +88,6 @@ int main(int argc, char *argv[])
 
 	while (template_name.empty()) {
 		template_name = input("Specify template name (or path): ");
-
 	}
 
 	Template _template = library.get(template_name);
