@@ -1,5 +1,5 @@
 ﻿cmake_minimum_required(VERSION 3.8)
-project("proyekgen" VERSION 0.4.3 LANGUAGES CXX)
+project("proyekgen" VERSION 1.0.0 LANGUAGES CXX)
 
 # Modify CMake variables
 set(CMAKE_CXX_STANDARD 17)
