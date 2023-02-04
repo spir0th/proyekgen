@@ -22,7 +22,7 @@ locate_download_program() {
 		DOWNLOAD_PROGRAM="curl"
 	elif [ ! command -v "wget" >/dev/null 2>&1 ]; then
 		DOWNLOAD_PROGRAM="wget"
-	else; then
+	else
 		echo "No suitable download program was found."
 		exit 127
 	fi
