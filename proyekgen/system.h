@@ -25,12 +25,12 @@ public:
 class SystemBasePaths
 {
 public:
-	static string global_config_path();
-	static string global_data_path();
-	static string global_templates_path();
-	static string local_config_path();
-	static string local_data_path();
-	static string local_templates_path();
+	static file_path global_config_path();
+	static file_path global_data_path();
+	static file_path global_templates_path();
+	static file_path local_config_path();
+	static file_path local_data_path();
+	static file_path local_templates_path();
 };
 
 /*
@@ -39,9 +39,9 @@ public:
 class SystemPaths
 {
 public:
-	static string executable_path();
-	static string current_path();
-	static vector<string> config_paths();
-	static vector<string> data_paths();
-	static vector<string> template_paths();
+	static file_path executable_path();
+	static file_path current_path();
+	static vector<file_path> config_paths();
+	static vector<file_path> data_paths();
+	static vector<file_path> template_paths();
 };

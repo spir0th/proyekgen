@@ -5,8 +5,8 @@
 int main(int argc, char *argv[])
 {
 	// Read application configuration from a list of paths
-	for (const string &config_path : SystemPaths::config_paths()) {
-		const string &config_filepath = config_path + separator + "init.cfg";
+	for (const file_path &config_path : SystemPaths::config_paths()) {
+		const string &config_filepath = config_path.string() + separator + "init.cfg";
 		config config_file;
 
 		if (!filesystem::is_regular_file(config_filepath)) {
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 		("info", "Print template information");
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
-			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
+			cxxopts::value<string>()->default_value(SystemPaths::current_path().string()))
 		("mkdir", "Make output directory if it does not exist");
 	options_parser.add_options("Misc")
 		("h,help", "View help information")

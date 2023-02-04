@@ -48,7 +48,7 @@ void SystemRuntime::fatal(int code)
  * On Windows, this returns the global_data_path function
  * meanwhile "/etc/proyekgen" on UNIX-based systems.
 */
-string SystemBasePaths::global_config_path()
+file_path SystemBasePaths::global_config_path()
 {
 #if defined(_WIN32)
 	// Just use the global_data_path function to store config
@@ -66,7 +66,7 @@ string SystemBasePaths::global_config_path()
  * On Windows, this returns "%PROGRAMDATA%\proyekgen"
  * meanwhile "/var/lib/proyekgen" on UNIX-based systems.
 */
-string SystemBasePaths::global_data_path()
+file_path SystemBasePaths::global_data_path()
 {
 #if defined(_WIN32)
 	wchar_t *path = new wchar_t[260];
@@ -103,9 +103,9 @@ string SystemBasePaths::global_data_path()
  * This returns the global_data_path function
  * with the preferred path separator and "templates"
 */
-string SystemBasePaths::global_templates_path()
+file_path SystemBasePaths::global_templates_path()
 {
-	return global_data_path() + separator + "templates";
+	return global_data_path().string() + separator + "templates";
 }
 
 /*
@@ -114,11 +114,11 @@ string SystemBasePaths::global_templates_path()
  * Unlike global_config_path, this function returns the local_data_path function
  * with the preferred path separator and "config"
 */
-string SystemBasePaths::local_config_path()
+file_path SystemBasePaths::local_config_path()
 {
 #if defined(_WIN32)
 	// Just use LocalAppData to store config files
-	return local_data_path() + "\\config";
+	return local_data_path().string() + "\\config";
 #elif defined(__unix__) or defined(__MACH__)
 	const char *path = getenv("XDG_CONFIG_HOME");
 	const char *fallback_path = getenv("HOME");
@@ -147,7 +147,7 @@ string SystemBasePaths::local_config_path()
  * meanwhile respective XDG directory specification (or
  * "$HOME/.proyekgen" in fallback) on UNIX-based systems.
 */
-string SystemBasePaths::local_data_path()
+file_path SystemBasePaths::local_data_path()
 {
 #if defined(_WIN32)
 	wchar_t *path = 0;
@@ -168,7 +168,7 @@ string SystemBasePaths::local_data_path()
 
 	transform(w_result.begin(), w_result.end(), back_inserter(result), [](wchar_t c) {
 		return (char)c;
-		});
+	});
 
 	return result;
 #elif defined(__unix__) or defined(__MACH__)
@@ -197,9 +197,9 @@ string SystemBasePaths::local_data_path()
  * This returns the local_data_path function
  * with the preferred path separator and "templates"
 */
-string SystemBasePaths::local_templates_path()
+file_path SystemBasePaths::local_templates_path()
 {
-	return local_data_path() + separator + "templates";
+	return local_data_path().string() + separator + "templates";
 }
 
 /*
@@ -208,7 +208,7 @@ string SystemBasePaths::local_templates_path()
  * This function uses low-level OS-underlying functions, if
  * the current OS doesn't have implementation, it returns an empty string.
 */
-string SystemPaths::executable_path()
+file_path SystemPaths::executable_path()
 {
 #if defined(_WIN32)
 	wchar_t path[MAX_PATH] = {0};
@@ -234,9 +234,9 @@ string SystemPaths::executable_path()
 /*
  * Get the current working path
 */
-string SystemPaths::current_path()
+file_path SystemPaths::current_path()
 {
-	return filesystem::current_path().string();
+	return filesystem::current_path();
 }
 
 /*
@@ -245,11 +245,11 @@ string SystemPaths::current_path()
  * If the current user is not an admin / has no root privileges,
  * the first path (which is SystemBasePaths::global_config_path) is an empty string.
 */
-vector<string> SystemPaths::config_paths()
+vector<file_path> SystemPaths::config_paths()
 {
 	return {SystemBasePaths::global_config_path(),
 		SystemBasePaths::local_config_path(),
-		current_path() + separator + ".proyekgen"};
+		current_path().string() + separator + ".proyekgen"};
 }
 
 /*
@@ -258,11 +258,11 @@ vector<string> SystemPaths::config_paths()
  * If the current user is not an admin / has no root privileges,
  * the first path (which is SystemBasePaths::global_data_path) is an empty string.
 */
-vector<string> SystemPaths::data_paths()
+vector<file_path> SystemPaths::data_paths()
 {
 	return {SystemBasePaths::global_data_path(), 
 		SystemBasePaths::local_data_path(),
-		current_path() + separator + ".proyekgen"};
+		current_path().string() + separator + ".proyekgen"};
 }
 
 /*
@@ -271,9 +271,9 @@ vector<string> SystemPaths::data_paths()
  * If the current user is not an admin / has no root privileges,
  * the first path (which is SystemBasePaths::global_templates_path) is an empty string.
 */
-vector<string> SystemPaths::template_paths()
+vector<file_path> SystemPaths::template_paths()
 {
 	return {SystemBasePaths::global_templates_path(),
 		SystemBasePaths::local_templates_path(),
-		current_path() + separator + ".proyekgen" + separator + "templates"};
+		current_path().string() + separator + ".proyekgen" + separator + "templates"};
 }

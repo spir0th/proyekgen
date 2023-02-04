@@ -82,7 +82,7 @@ bool TemplateProject::extract(const string &dest)
 	struct archive *reader;
 	struct archive *writer;
 	struct archive_entry *entry;
-	string cwd = SystemPaths::current_path();
+	file_path cwd = SystemPaths::current_path();
 	int result;
 	int flags;
 
@@ -150,7 +150,7 @@ bool TemplateProject::extract(const string &dest)
 
 	archive_read_free(reader);
 	archive_write_free(writer);
-	chdir(cwd.c_str());
+	chdir(cwd.string().c_str());
 	return true;
 }
 
@@ -312,7 +312,7 @@ bool TemplateLibrary::exists(const string &name)
 */
 void TemplateLibrary::init()
 {
-	for (string path : search_paths) {
+	for (const file_path &path : search_paths) {
 		if (!filesystem::is_directory(path)) {
 			continue;
 		}
@@ -333,7 +333,6 @@ void TemplateLibrary::init()
 
 			string info_name = (info_json.contains("name")) ? static_cast<string>(info_json["name"]) : path_filename;
 			string info_author = (info_json.contains("author")) ? static_cast<string>(info_json["author"]) : "unknown";
-
 			TemplateInfo info = TemplateInfo(info_name, info_author, path);
 
 			// project.tar.xz

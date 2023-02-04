@@ -84,5 +84,5 @@ private:
 	void init();
 	
 	vector<Template> templates = {};
-	vector<string> search_paths = SystemPaths::template_paths();
+	vector<file_path> search_paths = SystemPaths::template_paths();
 };
