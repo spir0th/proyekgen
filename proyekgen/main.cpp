@@ -29,11 +29,11 @@ int main(int argc, char *argv[])
 		("s,search-paths", "Append additional search paths",
 			cxxopts::value<vector<string>>()->default_value({}))
 		("l,list", "List installed templates")
-		("i,info", "Print template information without generating a project");
+		("info", "Print template information");
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
-		("m,mkdir", "Make output directory if it does not exist");
+		("mkdir", "Make output directory if it does not exist");
 	options_parser.add_options("Misc")
 		("h,help", "View help information")
 		("v,version", "Print program version");
