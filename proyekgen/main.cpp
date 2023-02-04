@@ -32,8 +32,8 @@ int main(int argc, char *argv[])
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path()))
-		("m,mkdir", "Make output directory if it does not exist",
-			cxxopts::value<bool>()->default_value("false"));
+		("m,mkdir", "Make output directory if it does not exist")
+		("e,elapsed", "Show elapsed time after generate");
 	options_parser.add_options("Misc")
 		("h,help", "View help information")
 		("v,version", "Print program version");
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 	fmt::print("	{0:s}\n\n", output_path);
 
 	if (!filesystem::is_directory(output_path)) {
-		if (!options["mkdir"].as<bool>()) {
+		if (!options.count("mkdir")) {
 			fmt::print("Output directory doesn't exist, append \"--mkdir\" to automatically create one.\n");
 			SystemRuntime::fatal();
 		}
@@ -112,10 +112,12 @@ int main(int argc, char *argv[])
 	if (!_template.project().extract(output_path)) {
 		fmt::print("Generation failure while extracting project data.\n");
 	}
-
-	// Log elapsed time at the end of process
-	steady_clock::time_point timer_end = steady_clock::now();
-	chrono::duration<double> timer_diff = timer_end - timer_start;
-	fmt::print("Finished at {0} milliseconds.\n", timer_diff);
+	if (options.count("elapsed")) {
+		// Log elapsed time at the end of process if -e or --elapsed is passed
+		steady_clock::time_point timer_end = steady_clock::now();
+		chrono::duration<double> timer_diff = timer_end - timer_start;
+		fmt::print("Finished at {0}.\n", timer_diff);
+	}
+	
 	return 0;
 }
