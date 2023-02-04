@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 
 	// List installed templates if passed from command-line options
 	if (options.count("list")) {
-		vector<string> templates = library.list();
+		vector<Template> templates = library.list();
 
 		if (templates.size() > 0) {
 			fmt::print("There are {0:d} templates installed:\n", templates.size());
@@ -70,17 +70,16 @@ int main(int argc, char *argv[])
 			fmt::print("There are no templates installed.\n", templates.size());
 			// TODO: Print a help link that leads to templates.
 		}
-		for (const string &template_name : templates) {
-			Template _template = library.get(template_name);
-			TemplateInfo info = _template.info();
-			string path_name = file_path(info.path()).filename().string();
+		for (Template t : templates) {
+			TemplateInfo info = t.info();
+			file_path filename = info.path().filename();
 			string name = "(" + info.name() + ")";
 
 			if (info.name().empty()) {
 				name.clear();
 			}
 
-			fmt::print("	{0:s} {1:s}\n", path_name, name);
+			fmt::print("	{0:s} {1:s}\n", filename.string(), name);
 		}
 
 		return EXIT_SUCCESS;
@@ -99,7 +98,7 @@ int main(int argc, char *argv[])
 	fmt::print("	author: {0:s}\n", _template.info().author());
 	fmt::print("	path: {0:s}\n", _template.info().path());
 	fmt::print("Output:\n");
-	fmt::print("	{0:s}\n", output_path);
+	fmt::print("	{0:s}\n\n", output_path);
 
 	if (!filesystem::is_directory(output_path)) {
 		if (!options["mkdir"].as<bool>()) {

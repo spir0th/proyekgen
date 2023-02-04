@@ -1,11 +1,14 @@
 #include "template.h"
 
-TemplateInfo::TemplateInfo(string name, string author, string path)
-	: _name(name), _author(author), _path(path), _platform(TemplatePlatform::Any)
+TemplateInfo::TemplateInfo(const string &name, const string &author, file_path path)
+	: _name(name), _author(author), _path(path)
+{}
+
+TemplateInfo::TemplateInfo()
 {}
 
 /*
- * Return the template name
+ * Returns the template name
 */
 string TemplateInfo::name()
 {
@@ -13,7 +16,7 @@ string TemplateInfo::name()
 }
 
 /*
- * Return the template author
+ * Returns the template author
 */
 string TemplateInfo::author()
 {
@@ -21,26 +24,58 @@ string TemplateInfo::author()
 }
 
 /*
- * Return the fully-qualified path of the template
+ * Returns the fully-qualified path of the template
 */
-string TemplateInfo::path()
+file_path TemplateInfo::path()
 {
 	return _path;
 }
 
-TemplateProject::TemplateProject(string path)
-	: _path(path)
+/*
+ * Set the template's name
+*/
+void TemplateInfo::set_name(const string &name)
 {
-	if (!filesystem::is_regular_file(_path)) {
-		fmt::print("{0:s} does not exist/or is not a file.\n", _path);
-		SystemRuntime::fatal();
-	}
+	_name = name;
+}
+
+/*
+ * Set the template's author
+*/
+void TemplateInfo::set_author(const string &author)
+{
+	_author = author;
+}
+
+TemplateProject::TemplateProject(const file_path &path)
+	: _path(path)
+{}
+
+TemplateProject::TemplateProject()
+{}
+
+/*
+ * Returns the path of the template's project file.
+*/
+file_path TemplateProject::path()
+{
+	return _path;
+}
+
+/*
+ * Set the path of the template's project file.
+*/
+void TemplateProject::set_path(const file_path &path)
+{
+	_path = path;
 }
 
 /*
  * Extract the template project to a specified destination
  * 
- * This function returns the result of file extraction
+ * This function returns the result of file extraction, and sometimes
+ * may cause a fatal error if the file does not exist / is not a file /
+ * is inaccessible.
 */
 bool TemplateProject::extract(const string &dest)
 {
@@ -64,7 +99,7 @@ bool TemplateProject::extract(const string &dest)
 	writer = archive_write_disk_new();
 	archive_write_disk_set_options(writer, flags);
 	archive_write_disk_set_standard_lookup(writer);
-	result = archive_read_open_filename(reader, _path.c_str(), 10240);
+	result = archive_read_open_filename(reader, _path.string().c_str(), 10240);
 
 	if (result != ARCHIVE_OK) {
 		fmt::print("Failed to read template data: {0:s}", _path);
@@ -149,10 +184,14 @@ int TemplateProject::copy(struct archive *r, struct archive *w)
 }
 
 Template::Template(TemplateInfo info, TemplateProject project)
-	: _info(info), _project(project) {}
+	: _info(info), _project(project)
+{}
+
+Template::Template()
+{}
 
 /*
- * Return the template information
+ * Returns the template's information
 */
 TemplateInfo Template::info()
 {
@@ -160,47 +199,51 @@ TemplateInfo Template::info()
 }
 
 /*
- * Return the template project
+ * Returns the template's project
 */
 TemplateProject Template::project()
 {
 	return _project;
 }
 
+/*
+ * Sets the template's info.
+*/
+void Template::set_info(TemplateInfo info)
+{
+	_info = info;
+}
+
+/*
+ * Sets the template's project.
+*/
+void Template::set_project(TemplateProject project)
+{
+	_project = project;
+}
+
 TemplateLibrary::TemplateLibrary(const vector<string> &paths)
 {
-	// Also add search paths passed from the constructor arguments
+	// Add additional search paths passed from the constructor arguments
 	search_paths.insert(search_paths.end(), make_move_iterator(paths.begin()),
 		make_move_iterator(paths.end()));
+
+	// Initialize for searching templates
+	init();
 }
 
 TemplateLibrary::TemplateLibrary()
-{}
+{
+	// Initialize for searching templates without additional search paths
+	init();
+}
 
 /*
- * Get the list of templates in the library
+ * Get the list of templates installed.
 */
-vector<string> TemplateLibrary::list()
+vector<Template> TemplateLibrary::list()
 {
-	vector<string> contents;
-
-	for (string path : search_paths) {
-		if (!filesystem::is_directory(path)) {
-			continue;
-		}
-		for (const dir_entry &entry : filesystem::directory_iterator{path}) {
-			string project = entry.path().string() + separator + "project.tar.xz";
-			string info = entry.path().string() + separator + "info.json";
-
-			if (!filesystem::is_regular_file(project) || !filesystem::is_regular_file(info)) {
-					continue;
-			}
-
-			contents.emplace_back(entry.path().string());
-		}
-	}
-
-	return contents;
+	return templates;
 }
 
 /*
@@ -215,26 +258,15 @@ Template TemplateLibrary::get(const string &name)
 		fmt::print("Cannot find template with the matching name: {0:s}\n", name);
 		SystemRuntime::fatal();
 	}
+	for (Template t : templates) {
+		if (t.info().path().filename().string() != name) {
+			continue;
+		}
 
-	string full_path = get_path(name);
-	string project_path = full_path + separator + "project.tar.xz";
-	string info_path = full_path + separator + "info.json";
+		return t;
+	}
 
-	// info.json
-	json info_json = json::object();
-	file_input info_stream(info_path);
-	info_json = json::parse(info_stream);
-
-	string info_name = (info_json.contains("name")) ? (string)info_json["name"] : name;
-	string info_author = info_json["author"];
-
-	TemplateInfo info = TemplateInfo(info_name, info_author, full_path);
-
-	// project.tar.xz
-	TemplateProject project = TemplateProject(project_path);
-
-	// Final output
-	return Template(info, project);
+	return Template();
 }
 
 /*
@@ -251,40 +283,22 @@ bool TemplateLibrary::remove(string name)
 		fmt::print("Cannot find template with the matching name: {0:s}\n", name);
 		SystemRuntime::fatal();
 	}
-	if (file_path(name).is_relative()) {
-		for (string t : list()) {
-			string project = t + separator + "project.tar.xz";
-			string info = t + separator + "info.json";
-
-			if (!filesystem::is_directory(t)) {
-				continue;
-			}
-			if (!filesystem::is_directory(t) ||
-				!filesystem::is_regular_file(project) ||
-				!filesystem::is_regular_file(info)) {
-				continue;
-			}
-
-			name = t + separator + name;
-		}
-	}
-
-	std::uintmax_t result = filesystem::remove_all(file_path(name));
+	
+	Template t = get(name);
+	std::uintmax_t result = filesystem::remove_all(t.info().path());
 	return (result > 0) ? true : false;
 }
 
 /*
- * Returns true if template exists in the library
+ * Returns true if template exists.
 */
 bool TemplateLibrary::exists(const string &name)
 {
-	string path = get_path(name);
-	string project = path + separator + "project.tar.xz";
-	string info = path + separator + "info.json";
+	for (Template t : templates) {
+		if (t.info().path().filename().string() != name) {
+			continue;
+		}
 
-	if (filesystem::is_directory(path) &&
-		filesystem::is_regular_file(project) &&
-		filesystem::is_regular_file(info)) {
 		return true;
 	}
 
@@ -292,29 +306,41 @@ bool TemplateLibrary::exists(const string &name)
 }
 
 /*
- * Returns the fully-qualified path of a template
+ * Initialize library.
+ * 
+ * This function searches for templates and stores them into a vector container.
 */
-string TemplateLibrary::get_path(const string &name)
+void TemplateLibrary::init()
 {
-	string path = name;
+	for (string path : search_paths) {
+		if (!filesystem::is_directory(path)) {
+			continue;
+		}
+		for (const dir_entry& entry : filesystem::directory_iterator{ path }) {
+			string path = entry.path().string();
+			string path_filename = entry.path().filename().string();
+			file_path project_path = path + separator + "project.tar.xz";
+			file_path info_path = path + separator + "info.json";
 
-	if (file_path(path).is_relative()) {
-		for (string t : list()) {
-			string project = t + separator + "project.tar.xz";
-			string info = t + separator + "info.json";
-
-			if (!filesystem::is_directory(t) ||
-				!filesystem::is_regular_file(project) ||
-				!filesystem::is_regular_file(info)) {
+			if (!filesystem::is_regular_file(project_path) || !filesystem::is_regular_file(info_path)) {
 				continue;
 			}
-			if (file_path(t).filename().string() != path) {
-				continue;
-			}
 
-			path = t;
+			// info.json
+			json info_json = json::object();
+			file_input info_stream(info_path);
+			info_json = json::parse(info_stream);
+
+			string info_name = (info_json.contains("name")) ? static_cast<string>(info_json["name"]) : path_filename;
+			string info_author = (info_json.contains("author")) ? static_cast<string>(info_json["author"]) : "unknown";
+
+			TemplateInfo info = TemplateInfo(info_name, info_author, path);
+
+			// project.tar.xz
+			TemplateProject project = TemplateProject(project_path);
+
+			// Add template to vector container
+			templates.push_back(Template(info, project));
 		}
 	}
-
-	return path;
 }

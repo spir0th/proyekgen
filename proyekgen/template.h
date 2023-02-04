@@ -5,30 +5,24 @@
 using std::make_move_iterator;
 
 /*
- * Unused enumeration class, may be used later in the future.
-*/
-enum class TemplatePlatform
-{
-	Any = 0, Windows = 1, Linux = 2, macOS = 3
-};
-
-/*
  * A class that contains the template's information.
 */
 class TemplateInfo
 {
 public:
-	TemplateInfo(string name, string author, string path = string());
+	TemplateInfo(const string &name, const string &author, file_path path = string());
+	TemplateInfo();
 
 	string name();
 	string author();
-	string path();
+	file_path path();
+	void set_name(const string &name);
+	void set_author(const string &author);
 
 private:
 	string _name;
 	string _author;
-	string _path;
-	TemplatePlatform _platform;
+	file_path _path;
 };
 
 /*
@@ -37,26 +31,35 @@ private:
 class TemplateProject
 {
 public:
-	TemplateProject(string path);
+	TemplateProject(const file_path &path);
+	TemplateProject();
+
+	file_path path();
+	void set_path(const file_path &path);
 
 	bool extract(const string &dest);
 
 private:
 	int copy(struct archive *r, struct archive *w);
 
-	string _path;
+	file_path _path;
 };
 
 /*
- * The class that holds everything about the template.
+ * The template class.
+ * 
+ * Used for accessing information and extracting the template project.
 */
 class Template
 {
 public:
 	Template(TemplateInfo info, TemplateProject project);
+	Template();
 
 	TemplateInfo info();
 	TemplateProject project();
+	void set_info(TemplateInfo info);
+	void set_project(TemplateProject project);
 
 private:
 	TemplateInfo _info;
@@ -72,13 +75,14 @@ public:
 	TemplateLibrary(const vector<string> &paths);
 	TemplateLibrary();
 
-	vector<string> list();
+	vector<Template> list();
 	Template get(const string &name);
 	bool remove(string name);
 	bool exists(const string &name);
 
 private:
-	string get_path(const string &name);
-
+	void init();
+	
+	vector<Template> templates = {};
 	vector<string> search_paths = SystemPaths::template_paths();
 };
