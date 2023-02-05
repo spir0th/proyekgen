@@ -183,8 +183,57 @@ int TemplateProject::copy(struct archive *r, struct archive *w)
 	}
 }
 
-Template::Template(TemplateInfo info, TemplateProject project)
-	: _info(info), _project(project)
+TemplateRunner::TemplateRunner(const file_path & path)
+	: _path(path)
+{
+	init();
+}
+
+TemplateRunner::TemplateRunner()
+{
+	init();
+}
+
+file_path TemplateRunner::path()
+{
+	return _path;
+}
+
+void TemplateRunner::set_path(const file_path &path)
+{
+	_path = path;
+}
+
+void TemplateRunner::run()
+{
+	if (!filesystem::is_regular_file(_path)) {
+		fmt::print("{0:s} is not a valid Lua script.");
+		SystemRuntime::fatal();
+	}
+
+	luaL_dofile(_lua, _path.string().c_str());
+	lua_getglobal(_lua, "_pgen_main");
+	int result = lua_pcall(_lua, 0, 0, 0);
+
+	if (result != 0) {
+		fmt::print("An error occurred while running script: {0:s}\n", lua_tostring(_lua, -1));
+	}
+}
+
+void TemplateRunner::init()
+{
+	_lua = luaL_newstate();
+
+	if (_lua == nullptr) {
+		fmt::print("Cannot initialize Lua.");
+		SystemRuntime::fatal();
+	}
+	
+	luaL_openlibs(_lua);
+}
+
+Template::Template(TemplateInfo info, TemplateProject project, vector<TemplateRunner> runners)
+	: _info(info), _project(project), _runners(runners)
 {}
 
 Template::Template()
@@ -207,6 +256,14 @@ TemplateProject Template::project()
 }
 
 /*
+ * Returns the template's runners
+*/
+vector<TemplateRunner> Template::runners()
+{
+	return _runners;
+}
+
+/*
  * Sets the template's info.
 */
 void Template::set_info(TemplateInfo info)
@@ -220,6 +277,14 @@ void Template::set_info(TemplateInfo info)
 void Template::set_project(TemplateProject project)
 {
 	_project = project;
+}
+
+/*
+ * Sets the template's runners;
+*/
+void Template::set_runners(vector<TemplateRunner> runners)
+{
+	_runners = runners;
 }
 
 TemplateLibrary::TemplateLibrary(const vector<string> &paths)
@@ -326,7 +391,7 @@ void TemplateLibrary::init()
 				continue;
 			}
 
-			// info.json
+			// Info
 			json info_json = json::object();
 			file_input info_stream(info_path);
 			info_json = json::parse(info_stream);
@@ -335,11 +400,25 @@ void TemplateLibrary::init()
 			string info_author = (info_json.contains("author")) ? static_cast<string>(info_json["author"]) : "unknown";
 			TemplateInfo info = TemplateInfo(info_name, info_author, path);
 
-			// project.tar.xz
+			// Project Data
 			TemplateProject project = TemplateProject(project_path);
 
+			// Runners
+			json runners_json = (info_json.contains("runners")) ? info_json["runners"] : json::array();
+			vector<TemplateRunner> runners;
+
+			for (auto& r : runners_json) {
+				file_path runner = r;
+
+				if (runner.is_relative()) {
+					runner = path + separator + runner.string();
+				}
+
+				runners.push_back(TemplateRunner(runner));
+			}
+
 			// Add template to vector container
-			templates.push_back(Template(info, project));
+			templates.push_back(Template(info, project, runners));
 		}
 	}
 }

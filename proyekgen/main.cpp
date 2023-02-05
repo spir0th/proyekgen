@@ -95,13 +95,17 @@ int main(int argc, char *argv[])
 	steady_clock::time_point timer_start = steady_clock::now();
 
 	if (options.count("info")) {
-		// Print template information then exit without generating a project
+		// Print template information then exit
 		fmt::print("Template:\n");
 		fmt::print("	name: {0:s}\n", _template.info().name());
 		fmt::print("	author: {0:s}\n", _template.info().author());
 		fmt::print("	path: {0:s}\n", _template.info().path());
-		fmt::print("Output:\n");
-		fmt::print("	{0:s}\n\n", output_path);
+		fmt::print("	runners:\n");
+
+		for (TemplateRunner runner : _template.runners()) {
+			fmt::print("		{0:s}\n", runner.path().stem());
+		}
+
 		return EXIT_SUCCESS;
 	}
 	if (!filesystem::is_directory(output_path)) {
@@ -118,8 +122,12 @@ int main(int argc, char *argv[])
 		// Generate project using given template and extract the project data
 		fmt::print("Generate failure while extracting project data.\n");
 	}
+	for (TemplateRunner runner : _template.runners()) {
+		// Run each runners after generating project
+		runner.run();
+	}
 
-	// Print elapsed time after generating a project
+	// Print elapsed time after done
 	steady_clock::time_point timer_end = steady_clock::now();
 	chrono::duration<double> timer_diff = timer_end - timer_start;
 	fmt::print("Finished at {0:%H:%M:%S}.\n", timer_diff);

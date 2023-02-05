@@ -31,6 +31,7 @@
 #include "fmt/ranges.h"
 #include "fmt/std.h"
 #include "libconfig.h++"
+#include "lua.hpp"
 #include "nlohmann/json.hpp"
 
 #define separator (char)std::filesystem::path::preferred_separator

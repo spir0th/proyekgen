@@ -26,7 +26,7 @@ private:
 };
 
 /*
- * A class that carries the template's project data.
+ * A class that provides the project data of a template.
 */
 class TemplateProject
 {
@@ -36,13 +36,32 @@ public:
 
 	file_path path();
 	void set_path(const file_path &path);
-
 	bool extract(const string &dest);
 
 private:
 	int copy(struct archive *r, struct archive *w);
 
 	file_path _path;
+};
+
+/*
+* A class that runs Lua code before and after generating a project.
+*/
+class TemplateRunner
+{
+public:
+	TemplateRunner(const file_path &path);
+	TemplateRunner();
+
+	file_path path();
+	void set_path(const file_path & path);
+	void run();
+
+private:
+	void init();
+
+	file_path _path;
+	lua_State *_lua = nullptr;
 };
 
 /*
@@ -53,17 +72,20 @@ private:
 class Template
 {
 public:
-	Template(TemplateInfo info, TemplateProject project);
+	Template(TemplateInfo info, TemplateProject project, vector<TemplateRunner> runners);
 	Template();
 
 	TemplateInfo info();
 	TemplateProject project();
+	vector<TemplateRunner> runners();
 	void set_info(TemplateInfo info);
 	void set_project(TemplateProject project);
+	void set_runners(vector<TemplateRunner> runners);
 
 private:
 	TemplateInfo _info;
 	TemplateProject _project;
+	vector<TemplateRunner> _runners;
 };
 
 /*
