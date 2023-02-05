@@ -61,6 +61,10 @@ int main(int argc, char *argv[])
 	file_path output_path = options["output"].as<string>();
 	TemplateLibrary library = TemplateLibrary(template_search_paths);
 
+	// Make absolute path for output directory if relative
+	if (output_path.is_relative()) {
+		output_path = SystemPaths::current_path().string() + separator + output_path.string();
+	}
 	// List installed templates if passed from command-line options
 	if (options.count("list")) {
 		vector<Template> templates = library.list();
@@ -125,7 +129,13 @@ int main(int argc, char *argv[])
 	// Execute each runners if "--skip-runners" isn't passed from command-line options
 	if (!options.count("skip-runners")) {
 		for (TemplateRunner runner : _template.runners()) {
+			// Temporarily change directory to output path
+			const file_path& cwd = SystemPaths::current_path();
+			chdir(output_path.string().c_str());
+			
+			// Execute runner, change directory back to current path when done
 			runner.execute();
+			chdir(cwd.string().c_str());
 		}
 	}
 
