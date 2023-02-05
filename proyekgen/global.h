@@ -1,4 +1,6 @@
 #pragma once
+#pragma warning(disable: 4244)
+#pragma warning(disable: 4275)
 #include <algorithm>
 #include <exception>
 #include <filesystem>
