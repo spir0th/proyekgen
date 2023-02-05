@@ -113,8 +113,6 @@ int main(int argc, char *argv[])
 	}
 	// Generate and execute runners if "skip-*" options weren't passed
 	if (!options.count("skip-generator")) {
-		fmt::print("Generating project using {0:s} template...\n", _template.info().name());
-
 		if (!filesystem::is_directory(output_path)) {
 			// Create directories or lead to fatal error if output directory is non-existent
 			if (!options.count("mkdir")) {
@@ -131,8 +129,6 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (!options.count("skip-runners")) {
-		fmt::print("Executing template runners...\n");
-
 		for (TemplateRunner runner : _template.runners()) {
 			// Execute each runners after generating project
 			runner.execute();
