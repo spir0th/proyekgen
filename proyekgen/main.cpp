@@ -27,13 +27,14 @@ int main(int argc, char *argv[])
 		("t,template", "Specify template name (or path)",
 			cxxopts::value<string>()->default_value(string()))
 		("s,search-paths", "Append additional search paths",
-			cxxopts::value<vector<string>>()->default_value({}))
+			cxxopts::value<vector<string>>()->default_value({}), "paths")
 		("l,list", "List installed templates")
+		("info", "Print template information")
 		("skip-generator", "Do not generate the project")
-		("skip-runners", "Do not execute runners after generating");
+		("skip-runners", "Do not execute runners");
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
-			cxxopts::value<string>()->default_value(SystemPaths::current_path().string()))
+			cxxopts::value<string>()->default_value(SystemPaths::current_path().string()), "path")
 		("mkdir", "Make output directory if it does not exist");
 	options_parser.add_options("Misc")
 		("h,help", "View help information")
@@ -86,36 +87,38 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 
-	// Always ask for template name if empty
+	// Always ask for template name (or path) if empty
 	while (template_name.empty()) {
 		template_name = input("Specify template name (or path): ");
 	}
 
-	// Parse template and start elapsed timer
+	// Parse template by getting it from the library using it's pathname
 	Template _template = library.get(template_name);
-	steady_clock::time_point timer_start = steady_clock::now();
+	
+	// Show template information only if "--info" is passed from command-line options
+	if (options.count("info")) {
+		fmt::print("Template:\n");
+		fmt::print("	name: {0:s}\n", _template.info().name());
+		fmt::print("	author: {0:s}\n", _template.info().author());
+		fmt::print("	path: {0:s}\n", _template.info().path());
 
-	// Print template info and it's runners before generating
-	fmt::print("Template:\n");
-	fmt::print("	name: {0:s}\n", _template.info().name());
-	fmt::print("	author: {0:s}\n", _template.info().author());
-	fmt::print("	path: {0:s}\n", _template.info().path());
+		if (!_template.runners().empty()) {
+			fmt::print("	runners:\n");
+		}
+		for (TemplateRunner runner : _template.runners()) {
+			fmt::print("		{0:}\n", runner.path().filename());
+		}
 
-	if (!_template.runners().empty()) {
-		fmt::print("	runners:\n");
+		return EXIT_SUCCESS;
 	}
-	for (TemplateRunner runner : _template.runners()) {
-		fmt::print("		{0:}\n", runner.path().filename());
-	}
-
-	fmt::print("\n"); // Make a newline
-
-	// Generate and execute runners if "skip-*" options weren't passed on the command-line
+	// Generate and execute runners if "skip-*" options weren't passed
 	if (!options.count("skip-generator")) {
+		fmt::print("Generating project using {0:s} template...\n", _template.info().name());
+
 		if (!filesystem::is_directory(output_path)) {
 			// Create directories or lead to fatal error if output directory is non-existent
 			if (!options.count("mkdir")) {
-				fmt::print("Output directory doesn't exist, append \"--mkdir\" to automatically create one.\n");
+				fmt::print("Output directory doesn't exist, append --mkdir to automatically create one.\n");
 				SystemRuntime::fatal();
 			}
 
@@ -128,15 +131,13 @@ int main(int argc, char *argv[])
 		}
 	}
 	if (!options.count("skip-runners")) {
+		fmt::print("Executing template runners...\n");
+
 		for (TemplateRunner runner : _template.runners()) {
-			// Run each runners after generating project
-			runner.run();
+			// Execute each runners after generating project
+			runner.execute();
 		}
 	}
 
-	// Print elapsed time after done
-	steady_clock::time_point timer_end = steady_clock::now();
-	chrono::duration<double> timer_diff = timer_end - timer_start;
-	fmt::print("Finished at {0:%H:%M:%S}.\n", timer_diff);
 	return 0;
 }

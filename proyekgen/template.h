@@ -55,7 +55,7 @@ public:
 
 	file_path path();
 	void set_path(const file_path & path);
-	void run();
+	void execute();
 
 private:
 	void init();

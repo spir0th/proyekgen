@@ -1,6 +1,5 @@
 #pragma once
 #include <algorithm>
-#include <chrono>
 #include <exception>
 #include <filesystem>
 #include <fstream>
@@ -25,7 +24,6 @@
 #include "archive.h"
 #include "archive_entry.h"
 #include "cxxopts.hpp"
-#include "fmt/chrono.h"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
@@ -36,7 +34,6 @@
 
 #define separator (char)std::filesystem::path::preferred_separator
 
-namespace chrono = std::chrono;
 namespace filesystem = std::filesystem;
 
 using config = libconfig::Config;

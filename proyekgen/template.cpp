@@ -204,10 +204,10 @@ void TemplateRunner::set_path(const file_path &path)
 	_path = path;
 }
 
-void TemplateRunner::run()
+void TemplateRunner::execute()
 {
 	if (!filesystem::is_regular_file(_path)) {
-		fmt::print("{0:s} is not a valid Lua script.");
+		fmt::print("{0:s} is not a valid Lua script.", _path);
 		SystemRuntime::fatal();
 	}
 
