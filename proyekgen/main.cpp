@@ -34,8 +34,7 @@ int main(int argc, char *argv[])
 		("skip-runners", "Do not execute runners");
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
-			cxxopts::value<string>()->default_value(SystemPaths::current_path().string()), "path")
-		("mkdir", "Make output directory if it does not exist");
+			cxxopts::value<string>()->default_value(SystemPaths::current_path().string()), "path");
 	options_parser.add_options("Misc")
 		("h,help", "View help information")
 		("v,version", "Print program version");
@@ -59,7 +58,7 @@ int main(int argc, char *argv[])
 	// Find the given template from the command-line options
 	vector<string> template_search_paths = options["search-paths"].as<vector<string>>();
 	string template_name = options["template"].as<string>();
-	string output_path = options["output"].as<string>();
+	file_path output_path = options["output"].as<string>();
 	TemplateLibrary library = TemplateLibrary(template_search_paths);
 
 	// List installed templates if passed from command-line options
@@ -111,26 +110,21 @@ int main(int argc, char *argv[])
 
 		return EXIT_SUCCESS;
 	}
-	// Generate and execute runners if "skip-*" options weren't passed
+	// Generate and execute runners if "--skip-generate" isn't passed from command-line options
 	if (!options.count("skip-generator")) {
 		if (!filesystem::is_directory(output_path)) {
-			// Create directories or lead to fatal error if output directory is non-existent
-			if (!options.count("mkdir")) {
-				fmt::print("Output directory doesn't exist, append --mkdir to automatically create one.\n");
-				SystemRuntime::fatal();
-			}
-
-			fmt::print("Output directory doesn't exist, making a new one.\n");
+			// Create directories if output directory is non-existent
+			fmt::print("Creating directory: {0:s}\n", output_path.stem());
 			filesystem::create_directories(output_path);
 		}
-		if (!_template.project().extract(output_path)) {
+		if (!_template.project().extract(output_path.string())) {
 			// Generate project using given template and extract the project data
 			fmt::print("Generate failure while extracting project data.\n");
 		}
 	}
+	// Execute each runners if "--skip-runners" isn't passed from command-line options
 	if (!options.count("skip-runners")) {
 		for (TemplateRunner runner : _template.runners()) {
-			// Execute each runners after generating project
 			runner.execute();
 		}
 	}
