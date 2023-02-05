@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
 		("s,search-paths", "Append additional search paths",
 			cxxopts::value<vector<string>>()->default_value({}))
 		("l,list", "List installed templates")
-		("info", "Print template information");
+		("skip-generator", "Do not generate the project")
+		("skip-runners", "Do not execute runners after generating");
 	options_parser.add_options("Output")
 		("o,output", "Specify output directory",
 			cxxopts::value<string>()->default_value(SystemPaths::current_path().string()))
@@ -68,7 +69,7 @@ int main(int argc, char *argv[])
 			fmt::print("There are {0:d} templates installed:\n", templates.size());
 		} else {
 			fmt::print("There are no templates installed.\n", templates.size());
-			// TODO: Print a help link that leads to templates.
+			fmt::print("To install a template, visit the link: %s\n", string());
 		}
 		for (Template t : templates) {
 			TemplateInfo info = t.info();
@@ -94,37 +95,40 @@ int main(int argc, char *argv[])
 	Template _template = library.get(template_name);
 	steady_clock::time_point timer_start = steady_clock::now();
 
-	if (options.count("info")) {
-		// Print template information then exit
-		fmt::print("Template:\n");
-		fmt::print("	name: {0:s}\n", _template.info().name());
-		fmt::print("	author: {0:s}\n", _template.info().author());
-		fmt::print("	path: {0:s}\n", _template.info().path());
-		fmt::print("	runners:\n");
+	// Print template info and it's runners before generating
+	fmt::print("Name: {0:s}\n", _template.info().name());
+	fmt::print("Author: {0:s}\n", _template.info().author());
+	fmt::print("Path: {0:s}\n", _template.info().path());
 
-		for (TemplateRunner runner : _template.runners()) {
-			fmt::print("		{0:s}\n", runner.path().stem());
-		}
-
-		return EXIT_SUCCESS;
-	}
-	if (!filesystem::is_directory(output_path)) {
-		// Create directories or lead to fatal error if output directory is non-existent
-		if (!options.count("mkdir")) {
-			fmt::print("Output directory doesn't exist, append \"--mkdir\" to automatically create one.\n");
-			SystemRuntime::fatal();
-		}
-
-		fmt::print("Output directory doesn't exist, making a new one.\n");
-		filesystem::create_directories(output_path);
-	}
-	if (!_template.project().extract(output_path)) {
-		// Generate project using given template and extract the project data
-		fmt::print("Generate failure while extracting project data.\n");
+	if (!_template.runners().empty()) {
+		fmt::print("Runners:\n");
 	}
 	for (TemplateRunner runner : _template.runners()) {
-		// Run each runners after generating project
-		runner.run();
+		fmt::print("	{0:s}\n", runner.path().stem());
+	}
+
+	// Generate and execute runners if "skip-*" options weren't passed on the command-line
+	if (!options.count("skip-generator")) {
+		if (!filesystem::is_directory(output_path)) {
+			// Create directories or lead to fatal error if output directory is non-existent
+			if (!options.count("mkdir")) {
+				fmt::print("Output directory doesn't exist, append \"--mkdir\" to automatically create one.\n");
+				SystemRuntime::fatal();
+			}
+
+			fmt::print("Output directory doesn't exist, making a new one.\n");
+			filesystem::create_directories(output_path);
+		}
+		if (!_template.project().extract(output_path)) {
+			// Generate project using given template and extract the project data
+			fmt::print("Generate failure while extracting project data.\n");
+		}
+	}
+	if (!options.count("skip-runners")) {
+		for (TemplateRunner runner : _template.runners()) {
+			// Run each runners after generating project
+			runner.run();
+		}
 	}
 
 	// Print elapsed time after done
