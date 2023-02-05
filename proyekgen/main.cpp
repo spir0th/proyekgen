@@ -96,16 +96,19 @@ int main(int argc, char *argv[])
 	steady_clock::time_point timer_start = steady_clock::now();
 
 	// Print template info and it's runners before generating
-	fmt::print("Name: {0:s}\n", _template.info().name());
-	fmt::print("Author: {0:s}\n", _template.info().author());
-	fmt::print("Path: {0:s}\n", _template.info().path());
+	fmt::print("Template:\n");
+	fmt::print("	name: {0:s}\n", _template.info().name());
+	fmt::print("	author: {0:s}\n", _template.info().author());
+	fmt::print("	path: {0:s}\n", _template.info().path());
 
 	if (!_template.runners().empty()) {
-		fmt::print("Runners:\n");
+		fmt::print("	runners:\n");
 	}
 	for (TemplateRunner runner : _template.runners()) {
-		fmt::print("	{0:s}\n", runner.path().stem());
+		fmt::print("		{0:}\n", runner.path().filename());
 	}
+
+	fmt::print("\n"); // Make a newline
 
 	// Generate and execute runners if "skip-*" options weren't passed on the command-line
 	if (!options.count("skip-generator")) {
