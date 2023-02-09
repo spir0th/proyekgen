@@ -12,19 +12,19 @@ find_package(LibArchive REQUIRED)
 
 # Find Lua by using find_package in Windows and find_path in UNIX
 if(WIN32)
-find_package(Lua REQUIRED)
+	find_package(Lua REQUIRED)
 elseif(UNIX)
-find_path(LUA_INCLUDE_DIRS lua.hpp)
-find_library(LUA_LIBRARIES lua)
+	find_path(LUA_INCLUDE_DIRS lua.hpp)
+	find_library(LUA_LIBRARIES lua)
 endif()
 
 # libconfig might not be available using find_package
 if(WIN32)
-find_path(LIBCONFIG++_INCLUDE_DIRS libconfig.h++)
-find_library(LIBCONFIG++_LIBRARIES libconfig++)
+	find_path(LIBCONFIG++_INCLUDE_DIRS libconfig.h++)
+	find_library(LIBCONFIG++_LIBRARIES libconfig++)
 elseif(UNIX)
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(LIBCONFIG++ REQUIRED libconfig++)
+	find_package(PkgConfig REQUIRED)
+	pkg_check_modules(LIBCONFIG++ REQUIRED libconfig++)
 endif()
 
 # Generate executable and link libraries
