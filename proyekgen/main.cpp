@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 			cxxopts::value<vector<string>>()->default_value({}), "paths")
 		("l,list", "List installed templates")
 		("info", "Print template information")
+		("user", fmt::format("Filter user-specific templates, only applicable to {0:s}", "-l/--list"))
 		("skip-generator", "Do not generate the project")
 		("skip-runners", "Do not execute runners");
 	options_parser.add_options("Output")
@@ -87,6 +88,19 @@ int main(int argc, char *argv[])
 	if (options.count("list")) {
 		vector<Template> templates = library.list();
 
+		if (options.count("user")) {
+			// Remove any listed templates that were installed globally.
+			string path_prefix = SystemPaths::template_paths()[1].string();
+			string current_path_prefix = SystemPaths::template_paths()[2].string();
+
+			for (int i = 0; i < templates.size(); i++) {
+				if (templates[i].info().path().string().rfind(path_prefix, 0) != 0 &&
+					templates[i].info().path().string().rfind(current_path_prefix, 0) != 0) {
+					// The template's path prefix is not located on local or current paths, remove.
+					templates.erase(templates.begin() + i);
+				}
+			}
+		}
 		if (templates.size() > 0) {
 			fmt::print("There are {0:d} templates installed:\n", templates.size());
 		} else {
