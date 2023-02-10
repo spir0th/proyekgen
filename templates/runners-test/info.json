@@ -1,0 +1,5 @@
+{
+	"name": "Runners Test",
+	"author": "spirothXYZ",
+	"runners": [ "out.lua", "in.lua" ]
+}

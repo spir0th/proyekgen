@@ -53,8 +53,8 @@ Alternatively, you can also look for them by navigating the following paths:
 
 ## Building
 ### Prerequisites
-- Must have a C++ compiler installed (e.g MSVC, GCC, Clang)'
-- Must have CMake installed
+- Must have a C++ compiler installed (e.g MSVC, GCC, Clang)
+- Must have CMake installed (version 3.21 and up)
 - Must have the following libraries installed/or built:
   - cxxopts
   - nlohmann-json
@@ -97,8 +97,31 @@ Notes:
 - 1. The build configuration `Linux armv7` is used for building proyekgen inside
 [Termux](https://termux.dev), see [Building on Termux](#building-on-termux-optional) section.
 
-### Deployment (optional)
-*Documentation not provided, no implementation.*
+### Packaging (optional)
+proyekgen uses CPack to package itself and integrates well with CMake. Before proceeding to package,
+make sure you have it configured and compiled one.
+
+A basic example of packaging the binary would be:
+```shell
+$ cd <path/to/build>
+$ cpack --config CPackConfig.cmake
+```
+
+The command above calls `cpack`, then packages the binary for the current platform.
+
+You can also specify a different or multiple generators:
+```shell
+$ cpack --config CPackConfig.cmake -G NSIS # NSIS installer only
+$ cpack --config CPackConfig.cmake -G ZIP # ZIP file only
+$ cpack --config CPackConfig.cmake -G "RPM;DEB" # RPM and DEB files
+```
+
+Or, if you want to package the source code and not the binary:
+```shell
+$ cpack --config CPackSourceConfig.cmake
+```
+
+*Note: Some generators (like NSIS and WiX) might be unavailable for source packages.*
 
 ### Building on Termux (optional)
 - Install the `proot-distro` package and install a distribution:

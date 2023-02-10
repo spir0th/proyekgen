@@ -1,0 +1,5 @@
+{
+	"name": "CMake with C++ project",
+	"author": "spirothXYZ",
+	"runners": [ "configure.lua" ]
+}
