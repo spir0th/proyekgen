@@ -51,6 +51,7 @@ install(TARGETS proyekgen
 	RUNTIME
 )
 install(RUNTIME_DEPENDENCY_SET dependencies
+	PRE_EXCLUDE_REGEXES "api-ms-.*|ext-ms-.*"
 	POST_EXCLUDE_REGEXES ".*Windows[\\/]system32.*|.*Windows[\\/]SysWOW64.*|^/lib" "^/usr" "^/bin"
 	DESTINATION ${PROYEKGEN_RUNTIME_DESTINATION}
 )
