@@ -45,7 +45,7 @@ bool SystemRuntime::is_admin_or_root()
 	}
 
 	return is_admin;
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 	return geteuid() == 0;
 #endif
 	// By default, this function returns false if no implementation was coded for the current OS
@@ -62,16 +62,13 @@ void SystemRuntime::fatal(int code)
 
 /*
  * Get the global configuration path.
-
- * On Windows, this returns the global_data_path function
- * meanwhile "/etc/proyekgen" on UNIX-based systems.
 */
 file_path SystemBasePaths::global_config_path()
 {
 #if defined(_WIN32)
 	// Just use the global_data_path function to store config
 	return global_data_path();
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 	return "/etc/proyekgen";
 #endif
 	// If OS has no specific implementation, return an empty string.
@@ -80,9 +77,6 @@ file_path SystemBasePaths::global_config_path()
 
 /*
  * Get the global data path.
- * 
- * On Windows, this returns "%PROGRAMDATA%\proyekgen"
- * meanwhile "/var/lib/proyekgen" on UNIX-based systems.
 */
 file_path SystemBasePaths::global_data_path()
 {
@@ -108,7 +102,7 @@ file_path SystemBasePaths::global_data_path()
 	});
 
 	return result;
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 	return "/var/lib/proyekgen";
 #endif
 	// If OS has no specific implementation, return an empty string.
@@ -137,7 +131,7 @@ file_path SystemBasePaths::local_config_path()
 #if defined(_WIN32)
 	// Just use LocalAppData to store config files
 	return local_data_path().string() + "\\config";
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 	const char *path = getenv("XDG_CONFIG_HOME");
 	const char *fallback_path = getenv("HOME");
 	stringstream stream;
@@ -160,10 +154,6 @@ file_path SystemBasePaths::local_config_path()
 
 /*
  * Get the local data path.
- * 
- * On Windows, this returns "%APPDATA%\proyekgen"
- * meanwhile respective XDG directory specification (or
- * "$HOME/.proyekgen" in fallback) on UNIX-based systems.
 */
 file_path SystemBasePaths::local_data_path()
 {
@@ -189,7 +179,7 @@ file_path SystemBasePaths::local_data_path()
 	});
 
 	return result;
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 	const char *path = getenv("XDG_DATA_HOME");
 	const char *fallback_path = getenv("HOME");
 	stringstream stream;
@@ -240,7 +230,7 @@ file_path SystemPaths::executable_path()
 	});
 
 	return result;
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 	char p[PATH_MAX] = {};
 	ssize_t c = readlink("/proc/self/exe", p, PATH_MAX);
 	return string(p, (c > 0) ? c : 0);

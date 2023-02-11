@@ -36,9 +36,11 @@
 #include <ShlObj.h>
 #include <direct.h>
 #define chdir _chdir
-#elif defined(__unix__) or defined(__MACH__)
+#elif defined(__linux__)
 #include "limits.h"
 #include "unistd.h"
+#elif defined(__APPLE__) && defined(__MACH__)
+#error Building on macOS is not supported.
 #endif
 
 #include "archive.h"

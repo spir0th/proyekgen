@@ -85,12 +85,10 @@ $ cmake --build build/<platform-arch-type>
 |                    | Debug               | Release               |
 |--------------------|---------------------|-----------------------|
 | **Windows 64-bit** | `windows-x64-debug` | `windows-x64-release` |
-| **Linux 64-bit**   | `linux-x64-debug`   | `linux-x64-release`   |
-| **Linux armv7***   | `linux-arm32-debug` | `linux-arm32-release` |
-| **macOS 64-bit**   | `macos-x64-debug`   | `macos-x64-release`   |
 | **Windows 32-bit** | `windows-x86-debug` | `windows-x86-release` |
+| **Linux 64-bit**   | `linux-x64-debug`   | `linux-x64-release`   |
 | **Linux 32-bit**   | `linux-x86-debug`   | `linux-x86-release`   |
-| **macOS 32-bit**   | `macos-x86-debug`   | `macos-x86-release`   |
+| **Linux armv7***   | `linux-armv7-debug` | `linux-armv7-release` |
 
 Notes:
 
@@ -99,7 +97,7 @@ Notes:
 
 ### Packaging (optional)
 proyekgen uses CPack to package itself and integrates well with CMake. Before proceeding to package,
-make sure you have it configured and compiled one.
+make sure you have the project configured and built the executable.
 
 A basic example of packaging the binary would be:
 ```shell
@@ -121,7 +119,7 @@ Or, if you want to package the source code and not the binary:
 $ cpack --config CPackSourceConfig.cmake
 ```
 
-*Note: Some generators (like NSIS and WiX) might be unavailable for source packages.*
+*Note: Some CPack generators (like NSIS and WiX) might be unavailable for source packages.*
 
 ### Building on Termux (optional)
 - Install the `proot-distro` package and install a distribution:
