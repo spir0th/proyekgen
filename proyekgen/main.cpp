@@ -94,8 +94,8 @@ int main(int argc, char *argv[])
 			string current_path_prefix = SystemPaths::template_paths()[2].string();
 
 			for (int i = 0; i < templates.size(); i++) {
-				if (templates[i].info().path().string().rfind(path_prefix, 0) != 0 &&
-					templates[i].info().path().string().rfind(current_path_prefix, 0) != 0) {
+				if (templates[i].path().string().rfind(path_prefix, 0) != 0 &&
+					templates[i].path().string().rfind(current_path_prefix, 0) != 0) {
 					// The template's path prefix is not located on local or current paths, remove.
 					templates.erase(templates.begin() + i);
 				}
@@ -108,11 +108,10 @@ int main(int argc, char *argv[])
 			fmt::print("To install a template, visit the link: %s\n", string());
 		}
 		for (Template t : templates) {
-			TemplateInfo info = t.info();
-			string identifier = info.identifier();
-			string name = "(" + info.name() + ")";
+			string identifier = t.identifier();
+			string name = "(" + t.name() + ")";
 
-			if (info.name().empty()) {
+			if (t.name().empty()) {
 				name.clear();
 			}
 
@@ -133,9 +132,9 @@ int main(int argc, char *argv[])
 	// Show template information only if "--info" is passed from command-line options
 	if (options.count("info")) {
 		fmt::print("Template:\n");
-		fmt::print("	name: {0:s}\n", _template.info().name());
-		fmt::print("	author: {0:s}\n", _template.info().author());
-		fmt::print("	path: {0:s}\n", _template.info().path());
+		fmt::print("	name: {0:s}\n", _template.name());
+		fmt::print("	author: {0:s}\n", _template.author());
+		fmt::print("	path: {0:s}\n", _template.path());
 
 		if (!_template.runners().empty()) {
 			fmt::print("	runners:\n");

@@ -18,65 +18,7 @@
 
 #include "template.h"
 
-TemplateInfo::TemplateInfo(const string &name, const string &author, file_path path)
-	: _name(name), _author(author), _path(path)
-{}
-
-TemplateInfo::TemplateInfo()
-{}
-
-/*
- * Returns the template identifier
- * 
- * An identifier is used for searching specific templates in proyekgen.
- * The identifier is extracted from the directory name of the template data.
-*/
-string TemplateInfo::identifier()
-{
-	return _path.filename().string();
-}
-
-/*
- * Returns the template name
-*/
-string TemplateInfo::name()
-{
-	return _name;
-}
-
-/*
- * Returns the template author
-*/
-string TemplateInfo::author()
-{
-	return _author;
-}
-
-/*
- * Returns the fully-qualified path of the template
-*/
-file_path TemplateInfo::path()
-{
-	return _path;
-}
-
-/*
- * Set the template's name
-*/
-void TemplateInfo::set_name(const string &name)
-{
-	_name = name;
-}
-
-/*
- * Set the template's author
-*/
-void TemplateInfo::set_author(const string &author)
-{
-	_author = author;
-}
-
-TemplateProject::TemplateProject(const file_path &path)
+TemplateProject::TemplateProject(const file_path& path)
 	: _path(path)
 {}
 
@@ -94,7 +36,7 @@ file_path TemplateProject::path()
 /*
  * Set the path of the template's project file.
 */
-void TemplateProject::set_path(const file_path &path)
+void TemplateProject::set_path(const file_path& path)
 {
 	_path = path;
 }
@@ -261,25 +203,17 @@ void TemplateRunner::init()
 	luaL_openlibs(_lua);
 }
 
-Template::Template(TemplateInfo info, TemplateProject project, vector<TemplateRunner> runners)
-	: _info(info), _project(project), _runners(runners)
+TemplateBase::TemplateBase(TemplateProject project, vector<TemplateRunner> runners)
+	: _project(project), _runners(runners)
 {}
 
-Template::Template()
+TemplateBase::TemplateBase()
 {}
-
-/*
- * Returns the template's information
-*/
-TemplateInfo Template::info()
-{
-	return _info;
-}
 
 /*
  * Returns the template's project
 */
-TemplateProject Template::project()
+TemplateProject TemplateBase::project()
 {
 	return _project;
 }
@@ -287,23 +221,15 @@ TemplateProject Template::project()
 /*
  * Returns the template's runners
 */
-vector<TemplateRunner> Template::runners()
+vector<TemplateRunner> TemplateBase::runners()
 {
 	return _runners;
 }
 
 /*
- * Sets the template's info.
-*/
-void Template::set_info(TemplateInfo info)
-{
-	_info = info;
-}
-
-/*
  * Sets the template's project.
 */
-void Template::set_project(TemplateProject project)
+void TemplateBase::set_project(TemplateProject project)
 {
 	_project = project;
 }
@@ -311,9 +237,68 @@ void Template::set_project(TemplateProject project)
 /*
  * Sets the template's runners;
 */
-void Template::set_runners(vector<TemplateRunner> runners)
+void TemplateBase::set_runners(vector<TemplateRunner> runners)
 {
 	_runners = runners;
+}
+
+Template::Template(TemplateProject project, vector<TemplateRunner> runners,
+	const string &name, const string &author, file_path path)
+	: TemplateBase(project, runners), _name(name), _author(author), _path(path) 
+{}
+
+Template::Template()
+{}
+
+/*
+ * Returns the template identifier
+ *
+ * An identifier is used for searching specific templates in proyekgen.
+ * The identifier is extracted from the directory name of the template data.
+*/
+string Template::identifier()
+{
+	return _path.filename().string();
+}
+
+/*
+ * Returns the template name
+*/
+string Template::name()
+{
+	return _name;
+}
+
+/*
+ * Returns the template author
+*/
+string Template::author()
+{
+	return _author;
+}
+
+/*
+ * Returns the fully-qualified path of the template
+*/
+file_path Template::path()
+{
+	return _path;
+}
+
+/*
+ * Set the template's name
+*/
+void Template::set_name(const string& name)
+{
+	_name = name;
+}
+
+/*
+ * Set the template's author
+*/
+void Template::set_author(const string& author)
+{
+	_author = author;
 }
 
 TemplateLibrary::TemplateLibrary(const vector<string> &paths)
@@ -353,7 +338,7 @@ Template TemplateLibrary::get(const string &name)
 		SystemRuntime::fatal();
 	}
 	for (Template t : templates) {
-		if (t.info().identifier() != name) {
+		if (t.identifier() != name) {
 			continue;
 		}
 
@@ -379,7 +364,7 @@ bool TemplateLibrary::remove(string name)
 	}
 	
 	Template t = get(name);
-	std::uintmax_t result = filesystem::remove_all(t.info().path());
+	std::uintmax_t result = filesystem::remove_all(t.path());
 	return (result > 0) ? true : false;
 }
 
@@ -389,7 +374,7 @@ bool TemplateLibrary::remove(string name)
 bool TemplateLibrary::exists(const string &name)
 {
 	for (Template t : templates) {
-		if (t.info().identifier() != name) {
+		if (t.identifier() != name) {
 			continue;
 		}
 
@@ -425,9 +410,8 @@ void TemplateLibrary::init()
 			file_input info_stream(info_path);
 			info_json = json::parse(info_stream);
 
-			string info_name = (info_json.contains("name")) ? static_cast<string>(info_json["name"]) : path_filename;
-			string info_author = (info_json.contains("author")) ? static_cast<string>(info_json["author"]) : "unknown";
-			TemplateInfo info = TemplateInfo(info_name, info_author, path);
+			string name = (info_json.contains("name")) ? static_cast<string>(info_json["name"]) : path_filename;
+			string author = (info_json.contains("author")) ? static_cast<string>(info_json["author"]) : "unknown";
 
 			// Project Data
 			TemplateProject project = TemplateProject(project_path);
@@ -436,7 +420,7 @@ void TemplateLibrary::init()
 			json runners_json = (info_json.contains("runners")) ? info_json["runners"] : json::array();
 			vector<TemplateRunner> runners;
 
-			for (auto& r : runners_json) {
+			for (auto &r : runners_json) {
 				file_path runner = r;
 
 				if (runner.is_relative()) {
@@ -447,7 +431,7 @@ void TemplateLibrary::init()
 			}
 
 			// Add template to vector container
-			templates.push_back(Template(info, project, runners));
+			templates.push_back(Template(project, runners, name, author, path));
 		}
 	}
 }

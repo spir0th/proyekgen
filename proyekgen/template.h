@@ -23,28 +23,6 @@
 using std::make_move_iterator;
 
 /*
- * A class that contains the template's information.
-*/
-class TemplateInfo
-{
-public:
-	TemplateInfo(const string &name, const string &author, file_path path = string());
-	TemplateInfo();
-
-	string identifier();
-	string name();
-	string author();
-	file_path path();
-	void set_name(const string &name);
-	void set_author(const string &author);
-
-private:
-	string _name;
-	string _author;
-	file_path _path;
-};
-
-/*
  * A class that provides the project data of a template.
 */
 class TemplateProject
@@ -84,27 +62,47 @@ private:
 };
 
 /*
- * The template class.
- * 
- * Used for accessing information and extracting the template project.
+ * A base class for templates.
+ *
+ * To provide template information, use the Template class instead.
 */
-class Template
+class TemplateBase
 {
 public:
-	Template(TemplateInfo info, TemplateProject project, vector<TemplateRunner> runners);
-	Template();
+	TemplateBase(TemplateProject project, vector<TemplateRunner> runners);
+	TemplateBase();
 
-	TemplateInfo info();
 	TemplateProject project();
 	vector<TemplateRunner> runners();
-	void set_info(TemplateInfo info);
 	void set_project(TemplateProject project);
 	void set_runners(vector<TemplateRunner> runners);
 
 private:
-	TemplateInfo _info;
 	TemplateProject _project;
 	vector<TemplateRunner> _runners;
+};
+
+/*
+ * The template class.
+*/
+class Template : public TemplateBase
+{
+public:
+	Template(TemplateProject project, vector<TemplateRunner> runners,
+		const string &name, const string &author, file_path path = string());
+	Template();
+
+	string identifier();
+	string name();
+	string author();
+	file_path path();
+	void set_name(const string& name);
+	void set_author(const string& author);
+
+private:
+	string _name;
+	string _author;
+	file_path _path;
 };
 
 /*
