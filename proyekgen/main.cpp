@@ -109,14 +109,14 @@ int main(int argc, char *argv[])
 		}
 		for (Template t : templates) {
 			TemplateInfo info = t.info();
-			string filename = info.path().filename().string();
+			string identifier = info.identifier();
 			string name = "(" + info.name() + ")";
 
 			if (info.name().empty()) {
 				name.clear();
 			}
 
-			fmt::print("	{0:s} {1:s}\n", filename, name);
+			fmt::print("	{0:s} {1:s}\n", identifier, name);
 		}
 
 		return EXIT_SUCCESS;

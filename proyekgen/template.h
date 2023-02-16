@@ -31,6 +31,7 @@ public:
 	TemplateInfo(const string &name, const string &author, file_path path = string());
 	TemplateInfo();
 
+	string identifier();
 	string name();
 	string author();
 	file_path path();
@@ -116,9 +117,9 @@ public:
 	TemplateLibrary();
 
 	vector<Template> list();
-	Template get(const string &name);
-	bool remove(string name);
-	bool exists(const string &name);
+	Template get(const string &keyword);
+	bool remove(string keyword);
+	bool exists(const string &keyword);
 
 private:
 	void init();

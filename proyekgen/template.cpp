@@ -26,6 +26,17 @@ TemplateInfo::TemplateInfo()
 {}
 
 /*
+ * Returns the template identifier
+ * 
+ * An identifier is used for searching specific templates in proyekgen.
+ * The identifier is extracted from the directory name of the template data.
+*/
+string TemplateInfo::identifier()
+{
+	return _path.filename().string();
+}
+
+/*
  * Returns the template name
 */
 string TemplateInfo::name()
@@ -342,7 +353,7 @@ Template TemplateLibrary::get(const string &name)
 		SystemRuntime::fatal();
 	}
 	for (Template t : templates) {
-		if (t.info().path().filename().string() != name) {
+		if (t.info().identifier() != name) {
 			continue;
 		}
 
@@ -378,7 +389,7 @@ bool TemplateLibrary::remove(string name)
 bool TemplateLibrary::exists(const string &name)
 {
 	for (Template t : templates) {
-		if (t.info().path().filename().string() != name) {
+		if (t.info().identifier() != name) {
 			continue;
 		}
 
