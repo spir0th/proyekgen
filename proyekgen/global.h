@@ -23,6 +23,7 @@
 #include <exception>
 #include <filesystem>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <iterator>
 #include <map>
@@ -45,7 +46,7 @@
 
 #include "archive.h"
 #include "archive_entry.h"
-#include "cxxopts.hpp"
+#include "CLI/CLI.hpp"
 #include "fmt/color.h"
 #include "fmt/core.h"
 #include "fmt/ranges.h"
@@ -65,6 +66,8 @@ using exception_ptr = std::exception_ptr;
 using file_path = std::filesystem::path;
 using file_input = std::ifstream;
 using file_output = std::ofstream;
+template<class R, class... Args>
+using function = std::function<R(Args...)>;
 using json = nlohmann::json;
 using cmd_options = cxxopts::Options;
 template<class Key, class T>

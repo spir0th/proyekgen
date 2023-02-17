@@ -1,5 +1,5 @@
 # Find required libraries
-find_package(cxxopts CONFIG REQUIRED)
+find_package(CLI11 CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
@@ -15,8 +15,8 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 # Define targets variables
-set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h" "input.h")
-set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp" "input.cpp")
+set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h" "input.h" )
+set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp" "input.cpp" )
 
 # Generate target executable
 add_executable(proyekgen ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})
@@ -29,7 +29,7 @@ target_include_directories(proyekgen PRIVATE
 	${LUA_INCLUDE_DIR}
 )
 target_link_libraries(proyekgen PRIVATE
-	cxxopts::cxxopts fmt::fmt nlohmann_json::nlohmann_json
+	CLI11::CLI11 fmt::fmt nlohmann_json::nlohmann_json
 	LibArchive::LibArchive ${LIBCONFIG++_LIBRARIES} ${LUA_LIBRARIES}
 )
 
