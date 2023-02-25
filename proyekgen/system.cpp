@@ -53,6 +53,20 @@ bool SystemRuntime::is_admin_or_root()
 }
 
 /*
+ * Asks for input
+ *
+ * The function returns the result.
+*/
+string SystemRuntime::input(const string &msg)
+{
+	using std::cin;
+	string output;
+	fmt::print(msg);
+	getline(cin, output);
+	return output;
+}
+
+/*
  * Exits program with code.
 */
 void SystemRuntime::fatal(int code)

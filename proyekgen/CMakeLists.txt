@@ -15,8 +15,8 @@ elseif(UNIX AND NOT APPLE)
 endif()
 
 # Define targets variables
-set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h" "input.h" )
-set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp" "input.cpp" )
+set(PROYEKGEN_HEADERS "template.h" "system.h" "global.h")
+set(PROYEKGEN_SOURCES "main.cpp" "template.cpp" "system.cpp")
 
 # Generate target executable
 add_executable(proyekgen ${PROYEKGEN_HEADERS} ${PROYEKGEN_SOURCES})

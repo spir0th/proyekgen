@@ -21,6 +21,7 @@
 
 using std::back_inserter;
 using std::count_if;
+using std::getline;
 using std::to_string;
 using std::transform;
 
@@ -31,6 +32,7 @@ class SystemRuntime
 {
 public:
 	static bool is_admin_or_root();
+	static string input(const string &msg);
 	static void fatal(int code = EXIT_FAILURE);
 };
 
