@@ -69,7 +69,6 @@ using file_output = std::ofstream;
 template<class R, class... Args>
 using function = std::function<R(Args...)>;
 using json = nlohmann::json;
-using cmd_options = cxxopts::Options;
 template<class Key, class T>
 using map = std::map<Key, std::less<Key>, std::allocator<std::pair<const Key, T>>>;
 template<class Key, class T>
