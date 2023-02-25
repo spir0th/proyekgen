@@ -25,7 +25,7 @@
  * This function uses low-level OS-underlying functions, if
  * the current OS doesn't have implementation, it returns false.
 */
-bool SystemRuntime::is_admin_or_root()
+bool SystemRuntime::is_root()
 {
 #if defined(_WIN32)
 	BOOL is_admin;
