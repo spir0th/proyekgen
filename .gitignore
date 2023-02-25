@@ -362,6 +362,10 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+# KDevelop
+.kdev4/*
+*.kdev4
+
 # Custom project ignores
 # Build directory
 build/
