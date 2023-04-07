@@ -1,6 +1,11 @@
 # proyekgen
 A simple and easy project generator made in C++17.
 
+## Note
+[proyekgen2](https://github.com/spirothdev/proyekgen2) has started development, this does not mean that this version of proyekgen is considered legacy.
+
+The new version is re-written into Python with now supporting multiple archive types for template project files.
+
 ## Usage
 Generate a project by using a template:
 
