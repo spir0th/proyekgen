@@ -1,10 +1,44 @@
-# proyekgen
-A simple and easy project generator made in C++17.
+<img height="150" src="docs/artwork/logo-sub.png#gh-dark-mode-only" />
 
-## Note
-[proyekgen2](https://github.com/spirothdev/proyekgen2) has started development, this does not mean that this version of proyekgen is considered legacy.
+<img height="150" src="docs/artwork/logo-light-sub.png#gh-light-mode-only" />
 
-The new version is re-written into Python with now supporting multiple archive types for template project files.
+<br>
+
+# Table of Contents
+- [Introduction](#introduction)
+  - [How does it work?](#how-does-it-work)
+  - [Usage](#usage)
+    - [Specifying output directory](#specifying-output-directory)
+    - [List installed templates](#list-installed-templates)
+- [Building](#building)
+  - [Configurations](#build-configurations)
+  - [Prerequisites](#prerequisites)
+  - [Compiling](#compiling)
+  - [Packaging (optional)](#packaging-optional)
+  - [Building on Termux (optional)](#building-on-termux-optional)
+- [Contributing](#contributing)
+  - [Creating an issue](#creating-an-issue)
+  - [Submitting pull requests](#submitting-pull-requests)
+- [License](#license)
+
+
+# Introduction
+If you are trying to slack off on work, proyekgen might be your option! With this program, it gets the job done, creating the source files and everything.
+
+## How does it work?
+Basically, you'll tell proyekgen to generate a project by using a format.
+
+The *format* is called a *template*, it's a set of project files, post-execute scripts, and information for the kind of project you want.
+
+Templates are also extensible and manageable, meaning you can import and export them in the following paths:
+
+| Windows                             | Unix                                     |
+|-------------------------------------|------------------------------------------|
+| `%AppData%\proyekgen\templates`     | `$HOME/.local/share/proyekgen/templates` |
+| `%ProgramData%\proyekgen\templates` | `/var/lib/proyekgen/templates`           |
+
+*Note for UNIX users: `$HOME/.proyekgen/templates` wll be used instead of `$HOME/.local/share/proyekgen/templates`*
+*if XDG dir utilities are not installed*
 
 ## Usage
 Generate a project by using a template:
@@ -46,17 +80,24 @@ There are 1 templates currently installed:
 	python (Simple Python project)
 ```
 
-Alternatively, you can also look for them by navigating the following paths:
-
-| Windows                             | Unix                                     |
-|-------------------------------------|------------------------------------------|
-| `%AppData%\proyekgen\templates`     | `$HOME/.local/share/proyekgen/templates` |
-| `%ProgramData%\proyekgen\templates` | `/var/lib/proyekgen/templates`           |
-
-*Note: `$HOME/.proyekgen/templates` is used instead of `$HOME/.local/share/proyekgen/templates`*
-*if XDG dir utilities are not installed*
-
 ## Building
+### Configurations
+
+|                    | Debug               | Release               |
+|--------------------|---------------------|-----------------------|
+| **Windows 64-bit** | `windows-x64-debug` | `windows-x64-release` |
+| **Windows 32-bit** | `windows-x86-debug` | `windows-x86-release` |
+| **Linux 64-bit**   | `linux-x64-debug`   | `linux-x64-release`   |
+| **Linux 32-bit**   | `linux-x86-debug`   | `linux-x86-release`   |
+| **Linux armv7***   | `linux-armv7-debug` | `linux-armv7-release` |
+
+If you don't use these configurations, build/packaging errors might show up unexpectedly.
+
+Notes:
+
+- 1. The build configuration `Linux armv7` is used for building proyekgen inside
+[Termux](https://termux.dev), see [Building on Termux](#building-on-termux-optional) section.
+
 ### Prerequisites
 - Must have a C++ compiler installed (e.g MSVC, GCC, Clang)
 - Must have CMake installed (version 3.21 and up)
@@ -67,7 +108,7 @@ Alternatively, you can also look for them by navigating the following paths:
   - libconfig
   - fmt
 
-On Windows, you can install the libraries by using [Conan](https://conan.io/)
+If you are building on Windows, you can install the libraries by using [Conan](https://conan.io/)
 or [vcpkg](https://vcpkg.io)
 
 ### Compiling
@@ -75,30 +116,16 @@ or [vcpkg](https://vcpkg.io)
 
 ```shell
 $ cd <path/to/proyekgen>
-$ cmake -S . -B build/<platform-arch-type>
+$ cmake -S . -B build/<configuration>
 ```
 
 - Then build to generate executable:
 
 ```shell
-$ cmake --build build/<platform-arch-type>
+$ cmake --build build/<configuration>
 ```
 
-#### Build configurations
-`<platform-arch-type>` can be one of the build configurations in the following table below:
-
-|                    | Debug               | Release               |
-|--------------------|---------------------|-----------------------|
-| **Windows 64-bit** | `windows-x64-debug` | `windows-x64-release` |
-| **Windows 32-bit** | `windows-x86-debug` | `windows-x86-release` |
-| **Linux 64-bit**   | `linux-x64-debug`   | `linux-x64-release`   |
-| **Linux 32-bit**   | `linux-x86-debug`   | `linux-x86-release`   |
-| **Linux armv7***   | `linux-armv7-debug` | `linux-armv7-release` |
-
-Notes:
-
-- 1. The build configuration `Linux armv7` is used for building proyekgen inside
-[Termux](https://termux.dev), see [Building on Termux](#building-on-termux-optional) section.
+For more info on `<configuration>`, see the [Configurations](#configurations) table.
 
 ### Packaging (optional)
 proyekgen uses CPack to package itself and integrates well with CMake. Before proceeding to package,
@@ -163,8 +190,12 @@ $ git clone https://github.com/spirothdev/proyekgen.git
 
 - Follow [build instructions](#compiling) to compile.
 
-## Documentation
-proyekgen has not been documented yet, it will be done in the future.
+## Contributing
+### Creating an issue
+**TODO**
+
+### Submitting pull requests
+**TODO**
 
 ## License
 proyekgen is licensed under the GNU Public License v3, feel free to use it in other programs.
