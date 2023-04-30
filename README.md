@@ -2,7 +2,7 @@
 
 <img height="150" src="docs/artwork/logo-light-sub.png#gh-light-mode-only" />
 
-<br>
+A simple and easy project generator for Windows, Mac, and Linux.
 
 # Table of Contents
 - [Introduction](#introduction)
